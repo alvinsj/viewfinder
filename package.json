@@ -2,7 +2,7 @@
   "name": "viewfinder",
   "version": "0.0.0",
   "description": "Viewfinder for Instagram",
-  "main": "js/app.js",
+  "main": "index.html",
   "dependencies": {
     "http-browserify": "alvinsj/http-browserify-ffos",
     "instagram-node": "^0.5.7",
@@ -24,7 +24,7 @@
     "watch-js": "watchify -t reactify js/*.js -o static/bundle.js -dv",
     "watch": "npm run watch-css & npm run watch-js",
     "build-css": "catw -c 'lessc -' 'css/*.less' > static/bundle.css",
-    "build-js": "browserify -t reactify js/*.js > static/bundle.js",
+    "build-js": "browserify --full-paths -t reactify js/*.js > static/bundle.js",
     "build": "npm run build-css && npm run build-js",
     "test": "jest"
   },
