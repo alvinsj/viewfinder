@@ -1,0 +1,86 @@
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Fira Sans Light";
+  }
+
+  body {
+    font-size: 0.7rem;
+    margin: 0;
+    color: #efefef;
+    width: 100vw;
+    height: 100vh;
+    
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1, h2 {
+    margin: 0 0 1rem 0;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  #error {
+    color: #f00;
+    font-family: monospace;
+    transition: all 1s;
+  }
+
+  form {
+    display: flex;
+  }
+
+  input, button, code, p {
+    font-size: inherit;
+  }
+
+  iframe{
+    border: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .media-content{
+    display: flex;
+    flex-direction: column;
+    h1{
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 0px;
+    }
+  }
+
+  .media {
+    width: 100%;
+    .user{
+      margin: 5px;
+      font-size: 1.3em;
+      color: orange;
+      img{ width: 1.6em; }
+      margin-top: 1.4em;
+    }
+    .image{
+      img{ width: 100%; }
+    }
+    .info{
+      padding: 10px;
+      background-color: rgba(100,100,100,0.7);
+      margin-top: -5px;
+      .caption{
+        margin-top: 5px;
+      }
+      .likes{
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .status{
+    margin: 10px;
+  }
+
+

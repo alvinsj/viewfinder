@@ -1,0 +1,36 @@
+{
+  "name": "viewfinder",
+  "version": "0.0.0",
+  "description": "Viewfinder for Instagram",
+  "main": "js/app.js",
+  "dependencies": {
+    "http-browserify": "alvinsj/http-browserify-ffos",
+    "instagram-node": "^0.5.7",
+    "localforage": "^1.2.2",
+    "react": "^0.13.2",
+    "react-canvas": "0.0.1"
+  },
+  "devDependencies": {
+    "browserify": "^10.1.0",
+    "catw": "^1.0.0",
+    "jest": "^0.1.39",
+    "jest-cli": "^0.4.1",
+    "less": "^2.5.0",
+    "reactify": "^1.1.0",
+    "watchify": "^3.2.1"
+  },
+  "scripts": {
+    "watch-css": "catw -c 'lessc -' 'css/*.less' -o static/bundle.css -v",
+    "watch-js": "watchify -t reactify js/*.js -o static/bundle.js -dv",
+    "watch": "npm run watch-css & npm run watch-js",
+    "build-css": "catw -c 'lessc -' 'css/*.less' > static/bundle.css",
+    "build-js": "browserify -t reactify js/*.js > static/bundle.js",
+    "build": "npm run build-css && npm run build-js",
+    "test": "jest"
+  },
+  "keywords": [
+    "instagram"
+  ],
+  "author": "email.to.alvin@gmail.com",
+  "license": "MIT"
+}
