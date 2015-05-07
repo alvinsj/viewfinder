@@ -16,9 +16,6 @@ var App = React.createClass({
     getInitialState: function(){
         return {access_token: false, code: false, medias: false};
     },
-    componentDidMount: function(){
-        window.addEventListener('resize', this.handleResize, true);
-    },
     render: function(){
         this._authAndFetchMedia();
         
@@ -31,8 +28,9 @@ var App = React.createClass({
             status = "Loading media...";
         }
 
-        return (
-            <div>
+        return !this.state.code ? 
+            <div />
+            :(<div>
                 <h1 className="brand" onClick={this._refresh}>
                     Viewfinder <small>for Instagram</small>
                 </h1>
@@ -52,6 +50,8 @@ var App = React.createClass({
         var component = this;
         if(!this.state.code){
             var browser = document.getElementById('browser');
+            var app = document.getElementById('app');
+            app.style.display = 'none';
             browser.style.display = 'block';
             browser.setAttribute('src', this.props.auth_url);
             browser.addEventListener('mozbrowserlocationchange',function(event){
@@ -59,6 +59,7 @@ var App = React.createClass({
                     var url = new URL(event.detail);
                     browser.stop();
                     browser.style.display = 'none';
+                    app.style.display = 'block';
                     component.setState({code: url.search.slice(6)})
                 }
             });
@@ -85,9 +86,6 @@ var App = React.createClass({
                localForage.setItem('last', medias, function() {});
            });   
         }
-    },
-    handleResize: function(){
-        this.forceUpdate();
     }
 });
 

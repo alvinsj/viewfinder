@@ -79,3 +79,8 @@ h1.brand {
 .status {
   margin: 10px;
 }
+.page {
+  border: 0;
+  width: 100vw;
+  height: 100vh;
+}
