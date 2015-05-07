@@ -1,1 +1,1 @@
-View (for Instagram) - Firefox OS packaged app
+Viewfinder (for Instagram) - Firefox OS packaged app
