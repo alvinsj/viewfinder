@@ -111,10 +111,12 @@ var App = React.createClass({
             var medias = this.state.medias.map(function(media){
                 return <Media key={media.id} media={media}/>
             })
-            return <div className="media-content">
-              <h1 onClick={this._refresh}>Viewfinder <small>for Instagram</small></h1>
-              {medias}
-            </div>
+            return (<div>
+                <h1 className="brand" onClick={this._refresh}>Viewfinder <small>for Instagram</small></h1>
+                <div className="media-content">
+                  {medias}
+                </div>
+            </div>)
         }else{
             return <div className="status">Loading media...</div>;
         }

@@ -44,18 +44,20 @@
     height: 100vh;
   }
 
-  .media-content{
-    display: flex;
-    flex-direction: column;
-    h1{
+  h1.brand{
       text-align: center;
       margin-top: 10px;
       margin-bottom: 0px;
-    }
+  }
+  
+  .media-content{
+    display: flex;
+    flex-flow: row wrap;
   }
 
   .media {
-    width: 100%;
+    width: 320px;
+    flex-grow: 1;
     .user{
       margin: 5px;
       font-size: 1.3em;
