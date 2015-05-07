@@ -9,14 +9,42 @@ var ig = require('instagram-node').instagram();
     });
 
 var Media = React.createClass({
+    getInitialState: function(){
+        return { profile_pic: null, photo: null }
+    },
+    componentDidMount: function(){
+        var component = this;
+        //console.log(this.props.media);
+        var callback_profile_pic = function(key, url){
+            localForage.getItem(key, function(err, blob) {
+                if(blob){
+                    var blobURL = URL.createObjectURL(blob);
+                    component.setState({profile_pic: blobURL});
+                }
+            });
+        };
+        var callback_photo = function(key, url){
+            localForage.getItem(key, function(err, blob) {
+                if(blob){
+                    var blobURL = URL.createObjectURL(blob);
+                    component.setState({photo: blobURL});
+                }
+            });
+        };
+        this._cacheImage('profile_pic:'+this.props.media.id,  
+            this.props.media.user.profile_picture, callback_profile_pic);
+        this._cacheImage('photo:'+this.props.media.id,  
+            this.props.media.images.standard_resolution.url, callback_photo);
+
+    },
     render: function(){
         return (
             <div className="media">
                <div className="user">
-                <img src={this.props.media.user.profile_picture} /> {this.props.media.user.username}
+                <img src={this.state.profile_pic} /> {this.props.media.user.username}
                </div>
                <div className="image">
-                  <img src={this.props.media.images.standard_resolution.url} />
+                  <img src={this.state.photo} />
                </div>
                <div className="info">
                   <div className="caption">{this.props.media.caption.text}</div>
@@ -26,6 +54,40 @@ var Media = React.createClass({
                </div>
             </div>
         );
+    },
+    _cacheImage: function(key, picture_url, callback){
+        var component = this;
+        localForage.getItem(key, function(err, blob) {
+          if(!blob){
+            component._requestImage(key, picture_url, callback);
+          }else{
+            console.log('photo_from_cache:', picture_url)
+            callback(key, picture_url);
+          }
+
+        });
+    },
+    _requestImage: function(key, picture_url, callback){
+        // We'll download the user's photo with AJAX.
+        var request = new XMLHttpRequest({mozSystem: true});
+         
+        // Let's get the first user's photo.
+        request.open('GET', picture_url, true);
+        request.responseType = 'blob';
+         
+        // When the AJAX state changes, save the photo locally.
+        request.addEventListener('load', function() {
+            if (request.status  === 200) { // readyState DONE
+                // We store the binary data as-is; this wouldn't work with localStorage.
+                console.log(request.response)
+                localForage.setItem(key, request.response, function() {
+                    // Photo  been saved, do whatever happens next!
+                    callback(key, picture_url);
+                });
+            }
+        });
+         
+        request.send()
     }
 })
 
@@ -36,45 +98,10 @@ var App = React.createClass({
         return {auth_url: auth_url, redirect_url: redirect_url};
     },
     getInitialState: function(){
-        return {access_token: false, code: false, medias: false}
-    },
-    _next: function(){
-        var component = this;
-        if(!this.state.code){
-            var browser = document.getElementById('browser');
-            browser.style.display = 'block';
-            browser.setAttribute('src', this.props.auth_url);
-            browser.addEventListener('mozbrowserlocationchange',function(event){
-                console.log('locationchange:', event.detail);
-                if(event.detail.indexOf('http://alvinsj.com') == 0){
-                    var url = new URL(event.detail);
-                    browser.stop();
-                    browser.style.display = 'none';
-                    component.setState({code: url.search.slice(6)})
-                }
-            });
-            //console.log(this.state.auth_url);
-        }
-        else if(this.state.code && !this.state.access_token){
-            ig.authorize_user(this.state.code, this.props.redirect_url, function(err, result){
-                if (err) {
-                    console.log('error: ', err.body);
-    
-                } else {
-                  console.log('Yay! Access token is ' + result.access_token);
-                    ig.use({ access_token: result.access_token });
-                    component.setState({access_token: result.access_token});
-                } 
-            });
-        }
-        else if(this.state.access_token && !this.state.medias){
-           ig.user_self_feed(function(err, medias, pagination, remaining, limit) {
-               component.setState({medias: medias});
-           });   
-        }
+        return {access_token: false, code: false, medias: false};
     },
     render: function(){
-        this._next();
+        this._authAndFetchMedia();
         
         if(!this.state.code){
             return <div className="status">Logging in...</div>
@@ -82,7 +109,7 @@ var App = React.createClass({
             return <div className="status">Authenticating...</div>
         }else if(this.state.medias){
             var medias = this.state.medias.map(function(media){
-                return <Media media={media}/>
+                return <Media key={media.id} media={media}/>
             })
             return <div className="media-content">
               <h1 onClick={this._refresh}>Viewfinder <small>for Instagram</small></h1>
@@ -95,6 +122,44 @@ var App = React.createClass({
     },
     _refresh: function(){
         this.setState({medias: false});
+    },
+    _authAndFetchMedia: function(){
+        var component = this;
+        if(!this.state.code){
+            var browser = document.getElementById('browser');
+            browser.style.display = 'block';
+            browser.setAttribute('src', this.props.auth_url);
+            browser.addEventListener('mozbrowserlocationchange',function(event){
+                if(event.detail.indexOf('http://alvinsj.com') == 0){
+                    var url = new URL(event.detail);
+                    browser.stop();
+                    browser.style.display = 'none';
+                    component.setState({code: url.search.slice(6)})
+                }
+            });
+        }
+        else if(this.state.code && !this.state.access_token){
+            ig.authorize_user(this.state.code, this.props.redirect_url, function(err, result){
+                if (err) {
+                    console.log('error: ', err.body);
+                } else {
+                    ig.use({ access_token: result.access_token });
+                    component.setState({access_token: result.access_token});
+                } 
+            });
+        }
+        else if(this.state.access_token && !this.state.medias){
+           localForage.getItem('last', function(err, medias) {
+                if(medias) {
+                    console.log('from last response');
+                    component.setState({medias: medias});
+                }
+           });
+           ig.user_self_feed(function(err, medias, pagination, remaining, limit) {
+               component.setState({medias: medias});
+               localForage.setItem('last', medias, function() {});
+           });   
+        }
     }
 });
 
