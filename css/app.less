@@ -45,9 +45,37 @@ iframe{
 }
 
 h1.brand{
-  text-align: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  height: 44px;
+
+  position: absolute;
+  top: 0;
+  left:0;
+  width: 100%;
+  background-color: rgba(0,0,0,0.3);
+
+  display: flex;
+  flex-direction: row; 
+  span{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 24px;
+    height: 24px;
+    line-height: 24px;
+  }
+  span.left{
+    padding-left: 10px;
+    flex-basis: main-size;
+
+  }
+  span.title{
+    flex-grow: 1;
+    text-align: center;
+    font-size: 16px;
+  }
+  span.right{
+    padding-right: 10px;
+    flex-basis: main-size;
+  }
 }
 
 .media-content{
@@ -83,6 +111,8 @@ h1.brand{
 
 .status{
   margin: 10px;
+  position: absolute;
+  top: 44;
 }
 
 .page{

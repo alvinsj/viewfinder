@@ -12,9 +12,11 @@ var localForage = require('localForage');;
 var React = require('react');
 var ig = require('instagram-node').instagram();
 
+var AppViewActions = require('actions/app-view-actions');
+
 var ListItem = React.createClass({
     getInitialState: function(){
-        return { profile_pic: null, photo: null }
+        return { profile_pic: null, photo: null}
     },
     componentDidMount: function(){
         window.addEventListener('resize', this.handleResize, true);
@@ -53,16 +55,17 @@ var ListItem = React.createClass({
         var likesTextStyle = this.getLikesTextStyle();
 
         var media = this.props.media;
+        var showUser = this._showUser.bind(this, media.user);
         var profilePic = this.state.profile_pic ? 
-                        <Image style={userImageStyle} src={this.state.profile_pic} /> : <Group />;
+                        <Image style={userImageStyle} src={this.state.profile_pic} onClick={showUser} /> : <Group />;
 
         return this.state.photo ?
             (<Group style={mediaGroupStyle}>
-                <Group style={userGroupStyle}>
+                <Group style={userGroupStyle} onClick={showUser}>
                     {profilePic}
-                    <Text style={userTextStyle}>{media.user.username}</Text>
+                    <Text style={userTextStyle} onClick={showUser}>{media.user.username}</Text>
                 </Group>
-                <Image style={imageStyle} src={this.state.photo} />
+                <Image style={imageStyle} src={this.state.photo} onClick={this._showDetails.bind(this, media)}/>
                 <Group style={infoGroupStyle}>
                     <Text style={captionTextStyle}>{media.caption.text}</Text>
                     <Text style={likesTextStyle}>{media.likes.count} likes</Text>
@@ -71,14 +74,23 @@ var ListItem = React.createClass({
             : <Group />;
 
     },
+    _showDetails: function(media, e){
+        AppViewActions.viewDetails(media);
+    },
+    _showUser: function(user, e){
+        AppViewActions.viewUser(user);
+    },
     getMediaGroupStyle: function(){
         return {
+            top: 0,
+            left: 0,
             width: window.innerWidth,
         }
     },
     getUserGroupStyle: function(){
         return {
             top: 0,
+            left: 0,
             width: window.innerWidth,
             fontSize: 10,
             color: "#FF9900"
@@ -87,6 +99,7 @@ var ListItem = React.createClass({
     getImageStyle: function() {
         return {
             top: 40,
+            left: 0,
             width: window.innerWidth,
             height: window.innerWidth
         };
@@ -94,6 +107,7 @@ var ListItem = React.createClass({
     getInfoGroupStyle: function(){
         return {
             top: window.innerWidth+30,
+            left: 0,
             width: window.innerWidth,
             fontSize: 10,
             color: "#fff",
@@ -115,7 +129,7 @@ var ListItem = React.createClass({
             width: window.innerWidth-25,
             height: 30,
             color: '#fff',
-            fontSize: 10
+            fontSize: 14
         }
     },
     getCaptionTextStyle: function() {
@@ -125,7 +139,7 @@ var ListItem = React.createClass({
             width: window.innerWidth-20,
             height: 40,
             color: '#fff',
-            fontSize: 10
+            fontSize: 14
         }
     },
     getLikesTextStyle: function() {
@@ -136,7 +150,7 @@ var ListItem = React.createClass({
             width: window.innerWidth-20,
             height: 40,
             color: '#fff',
-            fontSize: 10
+            fontSize: 14
         }
     },
 

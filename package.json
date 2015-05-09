@@ -4,11 +4,15 @@
   "description": "Viewfinder for Instagram",
   "main": "index.html",
   "dependencies": {
+    "events": "^1.0.2",
+    "flux": "^2.0.3",
     "http-browserify": "alvinsj/http-browserify-ffos",
     "instagram-node": "^0.5.7",
+    "keymirror": "^0.1.1",
     "localforage": "^1.2.2",
+    "object-assign": "^2.0.0",
     "react": "^0.13.2",
-    "react-canvas": "0.0.1"
+    "react-canvas": "alvinsj/react-canvas"
   },
   "devDependencies": {
     "browserify": "^10.1.0",
@@ -21,10 +25,10 @@
   },
   "scripts": {
     "watch-css": "catw -c 'lessc -' 'css/*.less' -o static/bundle.css -v",
-    "watch-js": "watchify -t reactify js/*.js -o static/bundle.js -dv",
+    "watch-js": "NODE_PATH=./node_modules:./js watchify --debug -t reactify js/*.js -o static/bundle.js -dv",
     "watch": "npm run watch-css & npm run watch-js",
     "build-css": "catw -c 'lessc -' 'css/*.less' > static/bundle.css",
-    "build-js": "browserify --full-paths -t reactify js/*.js > static/bundle.js",
+    "build-js": "NODE_PATH=./node_modules:./js browserify --debug --full-paths -t reactify js/*.js > static/bundle.js",
     "build": "npm run build-css && npm run build-js",
     "test": "jest"
   },

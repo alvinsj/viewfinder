@@ -1,91 +1,120 @@
 /** @jsx React.DOM */
 var localForage = require('localForage');;
 var React = require('react');
-var ig = require('instagram-node').instagram();
-    ig.use(require('./instagram'));
 
-var List = require('./components/list');
+var Surface = require('react-canvas').Surface,
+    List = require('components/list'),
+    ListItem = require('components/list-item'),
+    UserPage = require('components/user-page'),
+    StatusBar = require('components/status-bar')
+
+    StateStore = require('stores/state-store'),
+    MediaStore = require('stores/media-store'),
+    AppViewActions = require('actions/app-view-actions'),
+    AppServerActions = require('actions/app-server-actions'),
+
+    ActionTypes = require('constants/app-constants').ActionTypes;
 
 var App = React.createClass({
+    componentWillMount: function(){
+        StateStore.addListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._fetchMedias);
+        MediaStore.addListener(ActionTypes.FETCH_TIMELINE, this._loadMedias);
 
-    getDefaultProps: function(){
-        var redirect_url = "http://alvinsj.com/viewfinder/ffos";
-        var auth_url = ig.get_authorization_url(redirect_url);
-        return {auth_url: auth_url, redirect_url: redirect_url};
+        StateStore.addListener(ActionTypes.VIEW_DETAILS, this._handleViewDetails);
+        StateStore.addListener(ActionTypes.VIEW_USER, this._handleViewUser);
+        StateStore.addListener(ActionTypes.BACK_TO_HOME, this._handleBackToHome);
+    },
+    componentWillUnmount: function(){
+        StateStore.removeListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._fetchMedias);
+        MediaStore.removeListener(ActionTypes.FETCH_TIMELINE, this._loadMedias)
+
+        StateStore.removeListener(ActionTypes.VIEW_DETAILS, this._handleViewDetails);
+        StateStore.removeListener(ActionTypes.VIEW_USER, this._handleViewUser);
+        StateStore.removeListener(ActionTypes.BACK_TO_HOME, this._handleBackToHome);
     },
     getInitialState: function(){
-        return {access_token: false, code: false, medias: false};
-    },
-    render: function(){
-        this._authAndFetchMedia();
-        
-        var status = "";
-        if(!this.state.code){
-            status = "Logging in...";
-        }else if(!this.state.access_token){
-            status = "Authenticating..."
-        }else{
-            status = "Loading media...";
-        }
+        return {
+            medias: MediaStore.getTimelineMedias(), 
 
-        return !this.state.code ? 
-            <div />
-            :(<div>
-                <h1 className="brand" onClick={this._refresh}>
-                    Viewfinder <small>for Instagram</small>
-                </h1>
-                { this.state.medias ? 
+            page: '/', 
+            media: null,
+            user: null};
+    },
+    render: function(){        
+        return  (<div>
+                    <App.NavigationBar onTitleClick={this._refresh} page={this.state.page}/>
+                    {this._selectPage(this.state.page)}
+                </div>)
+            
+    },
+    _selectPage: function(page){
+        var surfaceWidth = window.innerWidth;
+        var surfaceHeight = window.innerHeight;
+
+        switch(page){
+            case '/media': 
+                return (
+                    <div className="media-content">
+                        <Surface width={surfaceWidth} height={surfaceHeight} left={0} top={30}>
+                            <ListItem media={this.state.media} />
+                        </Surface>
+                    </div>);
+                break;
+            case '/user': 
+                return <UserPage user={this.state.user} />;
+
+            default: 
+                return (this.state.medias ? 
                     (<div className="media-content">
                       <List medias={this.state.medias} />
                     </div>)
-                    : <div className="status">{status}</div>
-                }
-            </div>)
-            
+                    : <StatusBar currentStatus="Loading medias..." />);
+        }
+    },
+    _fetchMedias: function(){
+        if(!this.state.medias){
+            AppServerActions.fetchTimeline();
+        }
+    },
+    _loadMedias: function(medias){
+        this.setState({medias: medias});
+    }, 
+    _handleViewDetails: function(media){
+        this.setState({page: '/media', media: media});
+    },
+    _handleViewUser: function(user){
+        this.setState({page: '/user', user: user});
+    },
+    _handleBackToHome: function(){
+        this.setState({page: '/', media: null})
     },
     _refresh: function(){
-        this.setState({medias: false});
+        this.setState({medias: null});
+    }
+});
+
+App.NavigationBar = React.createClass({
+    propTypes: {
+        onTitleClick: React.PropTypes.func.isRequired
     },
-    _authAndFetchMedia: function(){
-        var component = this;
-        if(!this.state.code){
-            var browser = document.getElementById('browser');
-            var app = document.getElementById('app');
-            app.style.display = 'none';
-            browser.style.display = 'block';
-            browser.setAttribute('src', this.props.auth_url);
-            browser.addEventListener('mozbrowserlocationchange',function(event){
-                if(event.detail.indexOf('http://alvinsj.com') == 0){
-                    var url = new URL(event.detail);
-                    browser.stop();
-                    browser.style.display = 'none';
-                    app.style.display = 'block';
-                    component.setState({code: url.search.slice(6)})
+    render: function(){
+        return (
+            <h1 className="brand">
+                { this.props.page != '/' ?
+                    <span className="left" style={{width: 44}} onClick={this._backToHome}>
+                        <i className="fa fa-chevron-left" />
+                    </span> : <span className="left" style={{width: 44}}/>
                 }
-            });
-        }
-        else if(this.state.code && !this.state.access_token){
-            ig.authorize_user(this.state.code, this.props.redirect_url, function(err, result){
-                if (err) {
-                    console.log('error: ', err.body);
-                } else {
-                    ig.use({ access_token: result.access_token });
-                    component.setState({access_token: result.access_token});
-                } 
-            });
-        }
-        else if(this.state.access_token && !this.state.medias){
-           localForage.getItem('last', function(err, medias) {
-                if(medias) {
-                    //console.log('from last response');
-                    component.setState({medias: medias});
-                }
-           });
-           ig.user_self_feed(function(err, medias, pagination, remaining, limit) {
-               component.setState({medias: medias});
-               localForage.setItem('last', medias, function() {});
-           });   
-        }
+                <span className="title" onClick={this.props.onTitleClick}>
+                    Viewfinder <small>for Instagram</small>
+                </span>
+                <span className="right">
+                    <i className="fa fa-instagram" />
+                </span>
+            </h1>);
+    },
+    _backToHome: function(){
+        AppViewActions.backToHome();
     }
 });
 

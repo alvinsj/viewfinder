@@ -8,7 +8,7 @@ var Surface = ReactCanvas.Surface;
 var Image = ReactCanvas.Image;
 var Text = ReactCanvas.Text;
 
-var ListItem = require('./list-item');
+var ListItem = require('components/list-item');
 
 var List = React.createClass({
     componentDidMount: function(){
@@ -44,10 +44,10 @@ var List = React.createClass({
 
     getListViewStyle: function () {
         return {
-          top: 0,
+          top: 44,
           left: 0,
-          width: window.innerWidth,
-          height: window.innerHeight
+          width: window.innerWidth-10,
+          height: window.innerHeight-44
         };
     },
     handleResize: function(){
