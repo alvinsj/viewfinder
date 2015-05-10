@@ -1,7 +1,6 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-family: "Fira Sans Light";
 }
 
 body {
@@ -70,7 +69,7 @@ h1.brand{
   span.title{
     flex-grow: 1;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
   }
   span.right{
     padding-right: 10px;
@@ -86,25 +85,32 @@ h1.brand{
 .media {
   width: 320px;
   flex-grow: 1;
+  margin-top: 44px;
   .user{
-    margin: 5px;
-    font-size: 1.3em;
-    color: orange;
-    img{ width: 1.6em; }
-    margin-top: 1.4em;
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: row;
+    img{ width: 25px; height: 25px; }
+    .image{flex-basis: main-size;}
+    .username{flex-grow: 1; align-self: center; margin-left: 10px}
+    .time-ago{flex-basis: main-size; align-self: center;}
   }
   .image{
     img{ width: 100%; }
   }
   .info{
     padding: 10px;
-    background-color: rgba(100,100,100,0.7);
     margin-top: -5px;
+
     .caption{
-      margin-top: 5px;
+      font-size: 14px;
     }
     .likes{
-      margin-top: 5px;
+      margin-top: 10px;
+      text-align: right;
+      font-size: 12px;
     }
   }
 }

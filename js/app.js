@@ -75,7 +75,7 @@ var App = React.createClass({
         this.setState({medias: medias});
     }, 
     _handleViewDetails: function(media){
-        this.setState({page: '/media', media: media, title: 'Details'});
+        this.setState({page: '/media', media: media, title: ''});
     },
     _handleViewUser: function(user){
         var roundedStyle = {width: 100, height: 100, borderRadius: 50}
@@ -98,7 +98,10 @@ var App = React.createClass({
 App.NavigationBar = React.createClass({
     propTypes: {
         onTitleClick: React.PropTypes.func.isRequired,
-        title: React.PropTypes.object.isRequired
+        title: React.PropTypes.oneOfType([
+            React.PropTypes.string,
+            React.PropTypes.object
+            ]).isRequired
     },
     render: function(){
         return (

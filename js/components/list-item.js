@@ -12,7 +12,8 @@ var localForage = require('localForage');;
 var React = require('react');
 var ig = require('instagram-node').instagram();
 
-var AppViewActions = require('actions/app-view-actions');
+var AppViewActions = require('actions/app-view-actions'),
+    timeAgo = require('viewfinder-utils').timeAgo;
 
 var ListItem = React.createClass({
     propTypes: {
@@ -58,6 +59,9 @@ var ListItem = React.createClass({
         var likesTextStyle = this.getLikesTextStyle();
 
         var media = this.props.media;
+        var textAgo = timeAgo(media.created_time);
+        var timeAgoTextStyle = this.getTimeAgoTextStyle(textAgo.length);
+
         var showUser = this._showUser.bind(this, media.user);
         var profilePic = this.state.profile_pic ? 
                         <Image style={userImageStyle} src={this.state.profile_pic} onClick={showUser} /> : <Group />;
@@ -67,6 +71,7 @@ var ListItem = React.createClass({
                 <Group style={userGroupStyle} onClick={showUser}>
                     {profilePic}
                     <Text style={userTextStyle} onClick={showUser}>{media.user.username}</Text>
+                    <Text style={timeAgoTextStyle}>{textAgo}ago</Text>
                 </Group>
                 <Image style={imageStyle} src={this.state.photo} onClick={this._showDetails.bind(this, media)}/>
                 <Group style={infoGroupStyle}>
@@ -130,6 +135,16 @@ var ListItem = React.createClass({
             top: 13,
             left: 35,
             width: window.innerWidth-25,
+            height: 30,
+            color: '#fff',
+            fontSize: 14
+        }
+    },
+    getTimeAgoTextStyle: function(len) {
+        return {
+            top: 13,
+            left: window.innerWidth - ((len+5)*7),
+            width: (len+5)*7,
             height: 30,
             color: '#fff',
             fontSize: 14
