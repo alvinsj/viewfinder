@@ -51,6 +51,7 @@ module.exports = {
 
         if(access_token){
            localForage.getItem('timeline', function(err, medias) {
+           		if(err) console.log(err);
                 if(medias) {
                     AppDispatcher.dispatch({
                     	type: ActionTypes.FETCH_TIMELINE,
@@ -59,6 +60,8 @@ module.exports = {
                 }
            });
            ig.user_self_feed(function(err, medias, pagination, remaining, limit) {
+           	   if(err) console.log(err);
+
                AppDispatcher.dispatch({
                 	type: ActionTypes.FETCH_TIMELINE,
                 	medias: medias
@@ -75,6 +78,7 @@ module.exports = {
 
         if(access_token){
            localForage.getItem('user:'+user.id+':timeline:', function(err, medias) {
+                if(err) console.log(err);
                 if(medias) {
                     AppDispatcher.dispatch({
                     	type: ActionTypes.FETCH_USER_TIMELINE,
@@ -84,6 +88,8 @@ module.exports = {
                 }
            });
            ig.user_media_recent(user.id, function(err, medias, pagination, remaining, limit) {
+               if(err) console.log(err);
+               
                AppDispatcher.dispatch({
                 	type: ActionTypes.FETCH_USER_TIMELINE,
                 	user: user,

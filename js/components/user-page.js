@@ -3,7 +3,8 @@ var React = require('react');
 var AppServerActions = require('actions/app-server-actions'),
 	ActionTypes = require('constants/app-constants').ActionTypes,
 	MediaStore = require('stores/media-store'),
-	List = require('components/list');
+	List = require('components/list'),
+	StatusBar = require('components/status-bar');
 
 var UserPage = React.createClass({
 	propTypes: {
@@ -27,8 +28,10 @@ var UserPage = React.createClass({
         }
 	},
 	render: function(){
+		var user = this.props.user;
+
 		return ( !this.state.medias ?
-			<div class="status">Loading user... </div> : 
+			<StatusBar currentStatus={"Loading user..."} />: 
 			<div class="media-content">
 				<List medias={this.state.medias} />
 			</div>);

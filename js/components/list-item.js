@@ -15,6 +15,9 @@ var ig = require('instagram-node').instagram();
 var AppViewActions = require('actions/app-view-actions');
 
 var ListItem = React.createClass({
+    propTypes: {
+        media: React.PropTypes.object.isRequired
+    },
     getInitialState: function(){
         return { profile_pic: null, photo: null}
     },
@@ -68,7 +71,7 @@ var ListItem = React.createClass({
                 <Image style={imageStyle} src={this.state.photo} onClick={this._showDetails.bind(this, media)}/>
                 <Group style={infoGroupStyle}>
                     <Text style={captionTextStyle}>{media.caption.text}</Text>
-                    <Text style={likesTextStyle}>{media.likes.count} likes</Text>
+                    <Text style={likesTextStyle}>♥{media.likes.count}likes</Text>
                 </Group>
             </Group>)
             : <Group />;
@@ -150,7 +153,7 @@ var ListItem = React.createClass({
             width: window.innerWidth-20,
             height: 40,
             color: '#fff',
-            fontSize: 14
+            fontSize: 12
         }
     },
 
