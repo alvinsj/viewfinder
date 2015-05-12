@@ -15,5 +15,9 @@ module.exports = {
 	backToHome: function(){
 		AppDispatcher.dispatch({
 			type: ActionTypes.BACK_TO_HOME})
+	},
+	viewSettings: function(){
+		AppDispatcher.dispatch({
+			type: ActionTypes.VIEW_SETTINGS})
 	}
 }

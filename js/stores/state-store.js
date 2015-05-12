@@ -14,7 +14,7 @@ var StateStore = assign({}, EventEmitter.prototype, {
 	getInstagramAccessToken: function(){
 		return _access_token;
 	},
-	dispatchToken: AppDispatcher.register(function(action){		
+	dispatchToken: AppDispatcher.register(function(action){				
 		switch (action.type) {
 			case ActionTypes.INSTAGRAM_CODE: 
 				_code = action.code;
@@ -37,6 +37,16 @@ var StateStore = assign({}, EventEmitter.prototype, {
 		    case ActionTypes.BACK_TO_HOME:
 		      	StateStore.emit(ActionTypes.BACK_TO_HOME);
 		      	break;
+
+		    case ActionTypes.VIEW_SETTINGS:
+		    	StateStore.emit(ActionTypes.VIEW_SETTINGS);
+		    	break;
+
+		    case ActionTypes.LOGOUT:
+		    	_code = null;
+		    	_access_token = null;
+		    	StateStore.emit(ActionTypes.LOGOUT);
+		    	break;
 
 		    default:
 		      // do nothing

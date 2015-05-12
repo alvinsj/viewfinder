@@ -8,6 +8,7 @@ var Surface = require('react-canvas').Surface,
     UserPage = require('components/user-page'),
     DetailsPage = require('components/details-page'),
     StatusBar = require('components/status-bar'),
+    SettingsPage = require('components/settings-page'),
 
     StateStore = require('stores/state-store'),
     MediaStore = require('stores/media-store'),
@@ -19,20 +20,24 @@ var Surface = require('react-canvas').Surface,
 var _title = <span>Viewfinder <small>for Instagram</small></span>;
 var App = React.createClass({
     componentWillMount: function(){
+        StateStore.addListener(ActionTypes.LOGOUT, this._logout);
         StateStore.addListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._fetchMedias);
         MediaStore.addListener(ActionTypes.FETCH_TIMELINE, this._loadMedias);
 
         StateStore.addListener(ActionTypes.VIEW_DETAILS, this._handleViewDetails);
         StateStore.addListener(ActionTypes.VIEW_USER, this._handleViewUser);
         StateStore.addListener(ActionTypes.BACK_TO_HOME, this._handleBackToHome);
+        StateStore.addListener(ActionTypes.VIEW_SETTINGS, this._handleViewSettings);
     },
     componentWillUnmount: function(){
+        StateStore.removeListener(ActionTypes.LOGOUT, this._logout);
         StateStore.removeListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._fetchMedias);
         MediaStore.removeListener(ActionTypes.FETCH_TIMELINE, this._loadMedias)
 
         StateStore.removeListener(ActionTypes.VIEW_DETAILS, this._handleViewDetails);
         StateStore.removeListener(ActionTypes.VIEW_USER, this._handleViewUser);
         StateStore.removeListener(ActionTypes.BACK_TO_HOME, this._handleBackToHome);
+        StateStore.removeListener(ActionTypes.VIEW_SETTINGS, this._handleViewSettings);
     },
     getInitialState: function(){
         return {
@@ -58,6 +63,9 @@ var App = React.createClass({
             case '/user': 
                 return <UserPage user={this.state.user} />;
 
+            case '/settings': 
+                return <SettingsPage user={this.state.user} />;
+
             default: 
                 return (this.state.medias ? 
                     (<div className="media-content">
@@ -77,6 +85,9 @@ var App = React.createClass({
     _handleViewDetails: function(media){
         this.setState({page: '/media', media: media, title: ''});
     },
+    _handleViewSettings: function(){
+        this.setState({page: '/settings', title: 'Settings'});
+    },
     _handleViewUser: function(user){
         var roundedStyle = {width: 100, height: 100, borderRadius: 50}
         var title = (
@@ -92,6 +103,9 @@ var App = React.createClass({
     _refresh: function(){
         this.setState({medias: null});
         AppServerActions.fetchTimeline();
+    },
+    _logout: function(){
+        this.setState({medias: null});
     }
 });
 
@@ -115,12 +129,15 @@ App.NavigationBar = React.createClass({
                     {this.props.title}
                 </span>
                 <span className="right">
-                    <i className="fa fa-instagram" />
+                    <img src="img/icons/icon48x48.png" style={{width: 24, height: 24}} onClick={this._goToSettings}/>
                 </span>
             </h1>);
     },
     _backToHome: function(){
         AppViewActions.backToHome();
+    },
+    _goToSettings: function(){
+        AppViewActions.viewSettings();
     }
 });
 

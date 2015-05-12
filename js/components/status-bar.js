@@ -15,10 +15,12 @@ var StatusBar = React.createClass({
 		}
 	},
 	componentWillMount: function(){
+		StateStore.addListener(ActionTypes.LOGOUT, this._handleLogout);
 		StateStore.addListener(ActionTypes.INSTAGRAM_CODE, this._handleInstagramCode);
        	StateStore.addListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._handleInstagramAccessToken);
 	},
 	componentWillUnmount: function(){
+		StateStore.removeListener(ActionTypes.LOGOUT, this._handleLogout);
 		StateStore.removeListener(ActionTypes.INSTAGRAM_CODE, this._handleInstagramCode);
         StateStore.removeListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._handleInstagramAccessToken);
 	},
@@ -33,7 +35,7 @@ var StatusBar = React.createClass({
         }else{
             status = this.props.currentStatus;
         }
-
+        console.log(status);
 		return <div className="status">{status}</div>
 	},
 	_handleInstagramCode: function(code){
@@ -41,6 +43,10 @@ var StatusBar = React.createClass({
     },
     _handleInstagramAccessToken: function(access_token){
         this.setState({access_token: access_token});
+    },
+    _handleLogout: function(){
+    	console.log('_handleLogout');
+    	this.setState({code: null, access_token: null});
     }
 });
 

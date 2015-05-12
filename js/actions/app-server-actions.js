@@ -7,16 +7,41 @@ var StateStore = require('stores/state-store'),
 var _redirect_url = "http://alvinsj.com/viewfinder/ffos";
 
 module.exports = {
-	getInstagramCode: function(){
-		console.log('getInstagramCode')
-		var auth_url = ig.get_authorization_url(_redirect_url);
+    logout: function(){
+        console.log('Logging out')
 
-	    var browser = document.getElementById('browser');
+        var browser = document.getElementById('browser');
         var app = document.getElementById('app');
+
+        browser.setAttribute('src', "https://instagram.com/accounts/logout");
+
+        var dispatch = function(event){
+            if(event.detail == "https://instagram.com/accounts/logout"){
+            }else if(event.detail == "https://instagram.com/"){
+                console.log('Logged out');
+                browser.removeEventListener('mozbrowserlocationchange', dispatch);
+                AppDispatcher.dispatch({
+                    type: ActionTypes.LOGOUT
+                });
+            }
+        };
+        browser.addEventListener('mozbrowserlocationchange', dispatch);
+    },
+    getInstagramCode: function(){
+        console.log('getInstagramCode')
+
+        StateStore.ig = require('instagram-node').instagram();
+        ig = StateStore.ig;
+        ig.use(require('instagram'));
+
+		var auth_url = ig.get_authorization_url(_redirect_url);
+        var browser = document.getElementById('browser');
+        var app = document.getElementById('app');
+        
         app.style.display = 'none';
         browser.style.display = 'block';
-        browser.setAttribute('src', auth_url);
-        browser.addEventListener('mozbrowserlocationchange',function(event){
+
+        browser.addEventListener('mozbrowserlocationchange', function(event){
             if(event.detail.indexOf('http://alvinsj.com') == 0){
                 var url = new URL(event.detail);
                 browser.stop();
@@ -28,6 +53,7 @@ module.exports = {
                 });
             }
         });
+        browser.setAttribute('src', auth_url);
 	},
 	getInstagramAccessToken: function(code){
 		console.log('getInstagramAccessToken')

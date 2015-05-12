@@ -80,7 +80,8 @@ h1.brand span.right {
   margin-top: 44px;
 }
 .media .user {
-  margin: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
   font-size: 14px;
   display: flex;
   flex-direction: row;
@@ -97,6 +98,10 @@ h1.brand span.right {
   align-self: center;
   margin-left: 10px;
 }
+.media .user .time-ago {
+  flex-basis: main-size;
+  align-self: center;
+}
 .media .image img {
   width: 100%;
 }
@@ -105,11 +110,10 @@ h1.brand span.right {
   margin-top: -5px;
 }
 .media .info .caption {
-  margin-top: 5px;
   font-size: 14px;
 }
 .media .info .likes {
-  margin-top: 5px;
+  margin-top: 10px;
   text-align: right;
   font-size: 12px;
 }
@@ -123,4 +127,37 @@ h1.brand span.right {
   border: 0;
   width: 100vw;
   height: 100vh;
+}
+.settings-item {
+  display: flex;
+  flex: row wrap;
+  padding: 10px;
+  font-size: 16px;
+  height: 24px;
+}
+.settings-item a,
+.settings-item a:link,
+.settings-item a:visited {
+  color: #1eb9df;
+}
+.settings-item .name {
+  flex-grow: 1;
+  align-self: flex-start;
+}
+.settings-item .value {
+  flex-grow: 1;
+  align-self: flex-end;
+  text-align: right;
+  color: #1eb9df;
+}
+.settings-item .button {
+  width: 100%;
+  color: white;
+  background-color: #1eb9df;
+  height: 40px;
+  border: none;
+}
+.settings-item .separator {
+  flex-grow: 1;
+  border-bottom: 2px solid #1eb9df;
 }

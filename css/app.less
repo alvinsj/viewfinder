@@ -127,3 +127,39 @@ h1.brand{
   width: 100vw;
   height: 100vh;
 }
+
+.settings-item{
+  display: flex;
+  flex: row wrap;
+  padding: 10px;
+  font-size: 16px;
+  height: 24px;
+  
+  a, a:link, a:visited{
+    color: rgba(30, 185, 223, 1.00);
+  }
+
+  .name{
+    flex-grow: 1;
+    align-self: flex-start;
+  }
+
+  .value{
+    flex-grow: 1;
+    align-self: flex-end;
+    text-align: right;
+    color: rgba(30, 185, 223, 1.00);
+
+  }
+  .button{
+    width: 100%;
+    color: white;
+    background-color: rgba(30, 185, 223, 1.00);
+    height: 40px;
+    border: none;
+  }
+  .separator{
+    flex-grow: 1;
+    border-bottom: 2px solid rgba(30, 185, 223, 1.00);
+  }
+}

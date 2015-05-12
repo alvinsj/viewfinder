@@ -3,7 +3,8 @@ var React = require('react'),
 	Surface = require('react-canvas').Surface,
 	localForage = require('localforage'),
 	ListItem = require('components/list-item'),
-	timeAgo = require('viewfinder-utils').timeAgo;
+	timeAgo = require('viewfinder-utils').timeAgo,
+    AppViewActions = require('actions/app-view-actions');
 
 var Media = React.createClass({
     getInitialState: function(){
@@ -38,11 +39,10 @@ var Media = React.createClass({
     	var media = this.props.media;
         return (
             <div className="media">
-
 				<div className="image">
 					<img src={this.state.photo} />
 				</div>
-				<div className="user">
+				<div className="user" onClick={this._viewUser}>
 					<div className="image"><img src={this.state.profile_pic} /></div>
 					<div className="username">{media.user.username}</div>
 					<div className="time-ago">{timeAgo(media.created_time)} ago</div>
@@ -55,6 +55,9 @@ var Media = React.createClass({
 				</div>
             </div>
         );
+    },
+    _viewUser: function(){
+        AppViewActions.viewUser(this.props.media.user);
     },
     _cacheImage: function(key, picture_url, callback){
         var component = this;

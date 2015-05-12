@@ -202,7 +202,7 @@ var ListItem = React.createClass({
         request.send()
     },
     handleResize: function(){
-        this.forceUpdate();
+        if(this.isMounted()) this.forceUpdate();
     }
 });
 

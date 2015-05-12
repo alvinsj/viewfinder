@@ -11,7 +11,8 @@ module.exports = {
 
   	VIEW_USER: null,
   	VIEW_DETAILS: null,
-    VIEW_COMMENTS: null,
-    BACK_TO_HOME: null
+    VIEW_SETTINGS: null,
+    BACK_TO_HOME: null,
+    LOGOUT: null
   })
 };

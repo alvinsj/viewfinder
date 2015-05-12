@@ -51,7 +51,7 @@ var List = React.createClass({
         };
     },
     handleResize: function(){
-        this.forceUpdate();
+        if(this.isMounted()) this.forceUpdate();
     }
 });
 
