@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.0.1",
   "name": "Viewfinder for Instagram",
   "description": "Instagram client on Firefox OS",
   "launch_path": "/index.html",
@@ -26,15 +26,6 @@
     "*"
   ],
   "locales": {
-    "es": {
-      "name": "Aplicación privilegiada",
-      "description": "Demuestra cómo utilizar permisos para cargar contenido remoto",
-      "permissions": {
-        "systemXHR": {
-          "description": "Requerido para cargar contenido remoto"
-        }
-      }
-    }
   },
   "default_locale": "en"
 }
