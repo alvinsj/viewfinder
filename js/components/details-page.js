@@ -1,16 +1,18 @@
-/** @jsx React.DOM */
+
 var React = require('react'),
-	Surface = require('react-canvas').Surface,
 	localForage = require('localforage'),
 	ListItem = require('components/list-item'),
 	timeAgo = require('viewfinder-utils').timeAgo,
     AppViewActions = require('actions/app-view-actions');
 
-var Media = React.createClass({
-    getInitialState: function(){
-        return { profile_pic: null, photo: null }
-    },
-    componentDidMount: function(){
+class Media extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this._viewUser = this._viewUser.bind(this);
+        this.state = { profile_pic: null, photo: null };
+    }
+
+    componentDidMount() {
         var component = this;
         //console.log(this.props.media);
         var callback_profile_pic = function(key, url){
@@ -29,13 +31,14 @@ var Media = React.createClass({
                 }
             });
         };
-        this._cacheImage('profile_pic:'+this.props.media.id,  
+        this._cacheImage('profile_pic:'+this.props.media.id,
             this.props.media.user.profile_picture, callback_profile_pic);
-        this._cacheImage('photo:'+this.props.media.id,  
+        this._cacheImage('photo:'+this.props.media.id,
             this.props.media.images.standard_resolution.url, callback_photo);
 
-    },
-    render: function(){
+    }
+
+    render() {
     	var media = this.props.media;
         return (
             <div className="media">
@@ -55,11 +58,13 @@ var Media = React.createClass({
 				</div>
             </div>
         );
-    },
-    _viewUser: function(){
+    }
+
+    _viewUser() {
         AppViewActions.viewUser(this.props.media.user);
-    },
-    _cacheImage: function(key, picture_url, callback){
+    }
+
+    _cacheImage(key, picture_url, callback) {
         var component = this;
 		localForage.getItem(key, function(err, blob) {
 			if(!blob){
@@ -70,15 +75,16 @@ var Media = React.createClass({
 			}
 
 		});
-    },
-    _requestImage: function(key, picture_url, callback){
+    }
+
+    _requestImage(key, picture_url, callback) {
         // We'll download the user's photo with AJAX.
         var request = new XMLHttpRequest({mozSystem: true});
-         
+
         // Let's get the first user's photo.
         request.open('GET', picture_url, true);
         request.responseType = 'blob';
-         
+
         // When the AJAX state changes, save the photo locally.
         request.addEventListener('load', function() {
             if (request.status  === 200) { // readyState DONE
@@ -90,24 +96,22 @@ var Media = React.createClass({
                 });
             }
         });
-         
+
         request.send()
     }
-});
+}
 
-var DetailsPage = React.createClass({
-	propTypes: {
-		media: React.PropTypes.object.isRequired
-	},
-	render: function(){
+class DetailsPage extends React.Component {
+    render() {
 		console.log('detailsPage', this.props.media)
-		var surfaceWidth = window.innerWidth;
-        var surfaceHeight = window.innerHeight;
-        var media = this.props.media;
 		return  <div className="media-content">
 					<Media media={this.props.media} />
                 </div>
 	}
-});
+}
+
+DetailsPage.propTypes = {
+    media: React.PropTypes.object.isRequired
+};
 
 module.exports = DetailsPage;

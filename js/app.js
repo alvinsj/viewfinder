@@ -1,10 +1,12 @@
-/** @jsx React.DOM */
-var localForage = require('localForage');;
+var localForage = require('localForage');
 var React = require('react');
+var ReactDOM = require('react-dom');
 
-var Surface = require('react-canvas').Surface,
-    List = require('components/list'),
+var {AppBar, Navigation} = require('react-toolbox');
+
+var List = require('components/list'),
     ListItem = require('components/list-item'),
+    SearchUserPage = require('components/search-user-page'),
     UserPage = require('components/user-page'),
     DetailsPage = require('components/details-page'),
     StatusBar = require('components/status-bar'),
@@ -18,8 +20,29 @@ var Surface = require('react-canvas').Surface,
     ActionTypes = require('constants/app-constants').ActionTypes;
 
 var _title = <span>Viewfinder <small>for Instagram</small></span>;
-var App = React.createClass({
-    componentWillMount: function(){
+
+class App extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this._fetchMedias = this._fetchMedias.bind(this);
+        this._handleBackToHome = this._handleBackToHome.bind(this);
+        this._handleViewDetails = this._handleViewDetails.bind(this);
+        this._handleViewSettings = this._handleViewSettings.bind(this);
+        this._handleViewUser = this._handleViewUser.bind(this);
+        this._loadMedias = this._loadMedias.bind(this);
+        this._logout = this._logout.bind(this);
+        this._refresh = this._refresh.bind(this);
+
+        this.state = {
+            medias: MediaStore.getTimelineMedias(),
+
+            title: _title,
+            page: '/',
+            media: null,
+            user: null};
+    }
+
+    componentWillMount() {
         StateStore.addListener(ActionTypes.LOGOUT, this._logout);
         StateStore.addListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._fetchMedias);
         MediaStore.addListener(ActionTypes.FETCH_TIMELINE, this._loadMedias);
@@ -28,8 +51,9 @@ var App = React.createClass({
         StateStore.addListener(ActionTypes.VIEW_USER, this._handleViewUser);
         StateStore.addListener(ActionTypes.BACK_TO_HOME, this._handleBackToHome);
         StateStore.addListener(ActionTypes.VIEW_SETTINGS, this._handleViewSettings);
-    },
-    componentWillUnmount: function(){
+    }
+
+    componentWillUnmount() {
         StateStore.removeListener(ActionTypes.LOGOUT, this._logout);
         StateStore.removeListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._fetchMedias);
         MediaStore.removeListener(ActionTypes.FETCH_TIMELINE, this._loadMedias)
@@ -38,57 +62,57 @@ var App = React.createClass({
         StateStore.removeListener(ActionTypes.VIEW_USER, this._handleViewUser);
         StateStore.removeListener(ActionTypes.BACK_TO_HOME, this._handleBackToHome);
         StateStore.removeListener(ActionTypes.VIEW_SETTINGS, this._handleViewSettings);
-    },
-    getInitialState: function(){
-        return {
-            medias: MediaStore.getTimelineMedias(), 
+    }
 
-            title: _title,
-            page: '/', 
-            media: null,
-            user: null};
-    },
-    render: function(){        
+    render() {
         return  (<div>
                     <App.NavigationBar onTitleClick={this._refresh} page={this.state.page} title={this.state.title}/>
                     {this._selectPage(this.state.page)}
                 </div>)
-            
-    },
-    _selectPage: function(page){
+
+    }
+
+    _selectPage(page) {
         switch(page){
-            case '/media': 
+            case '/media':
                 return <DetailsPage media={this.state.media}/>;
 
-            case '/user': 
+            case '/user':
                 return <UserPage user={this.state.user} />;
 
-            case '/settings': 
+            case '/settings':
                 return <SettingsPage user={this.state.user} />;
 
-            default: 
-                return (this.state.medias ? 
+            case '/':
+                return <SearchUserPage />
+            default:
+                return (this.state.medias ?
                     (<div className="media-content">
                       <List medias={this.state.medias} />
                     </div>)
                     : <StatusBar currentStatus="Loading medias..." />);
         }
-    },
-    _fetchMedias: function(){
+    }
+
+    _fetchMedias() {
         if(!this.state.medias){
             AppServerActions.fetchTimeline();
         }
-    },
-    _loadMedias: function(medias){
+    }
+
+    _loadMedias(medias) {
         this.setState({medias: medias});
-    }, 
-    _handleViewDetails: function(media){
+    }
+
+    _handleViewDetails(media) {
         this.setState({page: '/media', media: media, title: ''});
-    },
-    _handleViewSettings: function(){
+    }
+
+    _handleViewSettings() {
         this.setState({page: '/settings', title: 'Settings'});
-    },
-    _handleViewUser: function(user){
+    }
+
+    _handleViewUser(user) {
         var roundedStyle = {width: 100, height: 100, borderRadius: 50}
         var title = (
             <div>
@@ -96,18 +120,21 @@ var App = React.createClass({
                 <div>{user.username}</div>
             </div>);
         this.setState({page: '/user', user: user, title: title});
-    },
-    _handleBackToHome: function(){
+    }
+
+    _handleBackToHome() {
         this.setState({page: '/', media: null, title: _title})
-    },
-    _refresh: function(){
+    }
+
+    _refresh() {
         this.setState({medias: null});
         AppServerActions.fetchTimeline();
-    },
-    _logout: function(){
+    }
+
+    _logout() {
         this.setState({medias: null});
     }
-});
+}
 
 App.NavigationBar = React.createClass({
     propTypes: {
@@ -118,6 +145,10 @@ App.NavigationBar = React.createClass({
             ]).isRequired
     },
     render: function(){
+        return (<AppBar fixed flat>
+                    <a href="/home">React Toolbox Docs</a>
+                    <Navigation />
+                  </AppBar>)
         return (
             <h1 className="brand">
                 { this.props.page != '/' ?
@@ -141,4 +172,4 @@ App.NavigationBar = React.createClass({
     }
 });
 
-React.render(<App />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));

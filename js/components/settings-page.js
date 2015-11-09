@@ -1,42 +1,48 @@
-/** @jsx React.DOM */
+
 var React = require('react'),
 	AppServerActions = require('actions/app-server-actions'),
 	AppViewActions = require('actions/app-view-actions');
 
 
-var SettingsItem = React.createClass({
-	render: function(){
+class SettingsItem extends React.Component {
+    render() {
 		return (
 		<div className="settings-item">
 			<div className="name">{this.props.name}</div>
 			<div className="value">{this.props.value}</div>
 		</div>);
 	}
-});
+}
 
-var SettingsItemButton = React.createClass({
-	render: function(){
+class SettingsItemButton extends React.Component {
+    render() {
 		return (
 		<div className="settings-item">
 			<button className="button" onClick={this.props.onClick}>{this.props.name}</button>
 		</div>);
 	}
-});
+}
 
-var SettingsItemSeparator = React.createClass({
-	render: function(){
+class SettingsItemSeparator extends React.Component {
+    render() {
 		return (
 		<div className="settings-item">
 			<div className="separator"></div>
 		</div>);
 	}
-});
+}
 
-var Link = React.createClass({
-	render: function(){
+class Link extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this._onClick = this._onClick.bind(this);
+    }
+
+    render() {
 		return <a ref="link" href="#" onClick={this._onClick}>{this.props.children}</a>
-	},
-	_onClick: function(e){
+	}
+
+    _onClick(e) {
 		e.preventDefault();
 
 		var activity = new MozActivity({
@@ -47,10 +53,15 @@ var Link = React.createClass({
 		          }
 	    });
 	}
-});
+}
 
-var SettingsPage = React.createClass({
-	render: function(){
+class SettingsPage extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this._logout = this._logout.bind(this);
+    }
+
+    render() {
 		return (
 		<div className="media-content">
 			<div className="media">
@@ -64,12 +75,14 @@ var SettingsPage = React.createClass({
 				<SettingsItem name={<Link href="https://github.com/mozilla/localforage">mozilla/localforage</Link>} />
 
 				<SettingsItemButton name="Logout" onClick={this._logout}/>
- 			</div> 
+ 			</div>
 		</div>);
-	},
-	_logout: function(){
+	}
+
+    _logout() {
 		AppViewActions.backToHome();
 		AppServerActions.logout();
 	}
-})
+}
+
 module.exports = SettingsPage;

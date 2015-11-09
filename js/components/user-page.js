@@ -1,4 +1,4 @@
-/** @jsx React.DOM */
+
 var React = require('react');
 var AppServerActions = require('actions/app-server-actions'),
 	ActionTypes = require('constants/app-constants').ActionTypes,
@@ -6,39 +6,48 @@ var AppServerActions = require('actions/app-server-actions'),
 	List = require('components/list'),
 	StatusBar = require('components/status-bar');
 
-var UserPage = React.createClass({
-	propTypes: {
-		user: React.PropTypes.object.isRequired
-	},
-	getInitialState: function(){
-		return {
-			medias: MediaStore.getUserTimeline(this.props.user.id)
-		}
-	},
-	componentWillMount: function(){
+class UserPage extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this._loadMedias = this._loadMedias.bind(this);
+
+        this.state = {
+			medias: MediaStore.getUserTimeline(props.user.id)
+		};
+    }
+
+    componentWillMount() {
 		MediaStore.addListener(ActionTypes.FETCH_USER_TIMELINE, this._loadMedias);
-	},
-	componentWillUnmount: function(){
+	}
+
+    componentWillUnmount() {
 		MediaStore.removeListener(ActionTypes.FETCH_USER_TIMELINE, this._loadMedias);
-	},
-	componentDidMount: function(){
+	}
+
+    componentDidMount() {
 		var component = this;
 		if(!this.state.medias){
  			AppServerActions.fetchUserTimeline(this.props.user)
         }
-	},
-	render: function(){
+	}
+
+    render() {
 		var user = this.props.user;
 
 		return ( !this.state.medias ?
-			<StatusBar currentStatus={"Loading user..."} />: 
-			<div class="media-content">
+			<StatusBar currentStatus={"Loading user..."} />:
+			<div className="media-content">
 				<List medias={this.state.medias} />
 			</div>);
-	},
-	_loadMedias: function(medias){
+	}
+
+    _loadMedias(medias) {
 		this.setState({medias: medias});
 	}
-});
+}
+
+UserPage.propTypes = {
+    user: React.PropTypes.object.isRequired
+};
 
 module.exports = UserPage;
