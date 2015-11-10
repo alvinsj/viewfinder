@@ -1,35 +1,35 @@
 
 var React = require('react'),
-	AppServerActions = require('actions/app-server-actions'),
-	AppViewActions = require('actions/app-view-actions');
+    AppServerActions = require('actions/app-server-actions'),
+    AppViewActions = require('actions/app-view-actions');
 
 
 class SettingsItem extends React.Component {
     render() {
-		return (
-		<div className="settings-item">
-			<div className="name">{this.props.name}</div>
-			<div className="value">{this.props.value}</div>
-		</div>);
-	}
+        return (
+        <div className="settings-item">
+            <div className="name">{this.props.name}</div>
+            <div className="value">{this.props.value}</div>
+        </div>);
+    }
 }
 
 class SettingsItemButton extends React.Component {
     render() {
-		return (
-		<div className="settings-item">
-			<button className="button" onClick={this.props.onClick}>{this.props.name}</button>
-		</div>);
-	}
+        return (
+        <div className="settings-item">
+            <button className="button" onClick={this.props.onClick}>{this.props.name}</button>
+        </div>);
+    }
 }
 
 class SettingsItemSeparator extends React.Component {
     render() {
-		return (
-		<div className="settings-item">
-			<div className="separator"></div>
-		</div>);
-	}
+        return (
+        <div className="settings-item">
+            <div className="separator"></div>
+        </div>);
+    }
 }
 
 class Link extends React.Component {
@@ -39,20 +39,20 @@ class Link extends React.Component {
     }
 
     render() {
-		return <a ref="link" href="#" onClick={this._onClick}>{this.props.children}</a>
-	}
+        return <a ref="link" href="#" onClick={this._onClick}>{this.props.children}</a>
+    }
 
     _onClick(e) {
-		e.preventDefault();
+        e.preventDefault();
 
-		var activity = new MozActivity({
-		    name: "view",
-		    data: {
-		              type: "url",
-		              url: this.props.href
-		          }
-	    });
-	}
+        var activity = new MozActivity({
+            name: "view",
+            data: {
+                      type: "url",
+                      url: this.props.href
+                  }
+        });
+    }
 }
 
 class SettingsPage extends React.Component {
@@ -62,27 +62,24 @@ class SettingsPage extends React.Component {
     }
 
     render() {
-		return (
-		<div className="media-content">
-			<div className="media">
-				<SettingsItem name="Version" value="0.0.1" />
-				<SettingsItemSeparator />
-				<SettingsItem name="Credits" />
-				<SettingsItem name={<Link href="https://github.com/facebook/react">facebook/react</Link>} />
-				<SettingsItem name={<Link href="https://github.com/Flipboard/react-canvas">flipboard/react-canvas</Link>} />
-				<SettingsItem name={<Link href="https://github.com/totemstech/instagram-node">totemstech/instagram-node</Link>} />
-				<SettingsItem name={<Link href="https://github.com/substack/browserify">substack/browserify</Link>} />
-				<SettingsItem name={<Link href="https://github.com/mozilla/localforage">mozilla/localforage</Link>} />
-
-				<SettingsItemButton name="Logout" onClick={this._logout}/>
- 			</div>
-		</div>);
-	}
+        return (
+        <div className="media-content">
+            <div className="media">
+                <SettingsItem name="Version" value="0.1.0" />
+                <SettingsItemSeparator />
+                <SettingsItem name="Credits" />
+                <SettingsItem name={<Link href="https://github.com/facebook/react">facebook/react</Link>} />
+                <SettingsItem name={<Link href="https://github.com/babel">babel/babel</Link>}/>
+                <SettingsItem name={<Link href="https://github.com/substack/browserify">substack/browserify</Link>} />
+                <SettingsItem name={<Link href="https://github.com/mozilla/localforage">mozilla/localforage</Link>} />
+             </div>
+        </div>);
+    }
 
     _logout() {
-		AppViewActions.backToHome();
-		AppServerActions.logout();
-	}
+        AppViewActions.backToHome();
+        AppServerActions.logout();
+    }
 }
 
 module.exports = SettingsPage;
