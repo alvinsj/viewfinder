@@ -14,8 +14,7 @@
     "object-assign": "^2.1.1",
     "react": "^0.14.2",
     "react-addons-css-transition-group": "^0.14.2",
-    "react-dom": "^0.14.2",
-    "react-toolbox": "^0.11.4"
+    "react-dom": "^0.14.2"
   },
   "devDependencies": {
     "babel-core": "^6.1.2",
