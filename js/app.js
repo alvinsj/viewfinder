@@ -101,7 +101,7 @@ class App extends React.Component {
                 return _title;
 
             case '/media':
-                return <span className="fa fa-instagram" />;
+                return <i className="fa fa-instagram" />;
 
             case '/hashtag':
                 return '#'+this.state.hashtag;
@@ -122,6 +122,9 @@ class App extends React.Component {
 
             case '/search_hashtag':
                 return <span><small><i className="fa fa-search"/></small> Search #Hashtag</span>;
+
+            case '/bookmarks':
+                return <span><small><i className="fa fa-bookmark-o"/></small> Bookmarks</span>;
 
             default:
                 return _title;
