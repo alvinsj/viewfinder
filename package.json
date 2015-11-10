@@ -8,7 +8,6 @@
     "events": "^1.0.2",
     "flux": "^2.1.1",
     "http-browserify": "alvinsj/http-browserify-ffos",
-    "instagram-node": "^0.5.7",
     "keymirror": "^0.1.1",
     "localforage": "^1.3.0",
     "normalize.css": "^3.0.3",
