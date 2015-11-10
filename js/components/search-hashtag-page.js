@@ -1,28 +1,31 @@
 var React = require('react'),
+
     ReactDOM = require('react-dom'),
     localForage = require('localforage'),
     ListItem = require('components/list-item'),
     timeAgo = require('viewfinder-utils').timeAgo,
-    ReactDOM = require('react-dom'),
+
+
     AppServerActions = require('actions/app-server-actions'),
     AppViewActions = require('actions/app-view-actions'),
+
     StatusBar = require('components/status-bar'),
     SearchStore = require('stores/search-store');
 
-class SearchUser extends React.Component {
+class SearchHashtag extends React.Component {
     static get propTypes () {
         return {
-            onUserSelected: React.PropTypes.func.isRequired
+            onHashtagSelected: React.PropTypes.func.isRequired
         }
     }
     constructor(props, context) {
         super(props, context);
         this._handleSearch = this._handleSearch.bind(this);
-        this.renderUsers = this.renderUsers.bind(this);
+        this.renderHashtags = this.renderHashtags.bind(this);
         this.render = this.render.bind(this);
-        this._handleUserClick = this._handleUserClick.bind(this);
+        this._handleHashtagClick = this._handleHashtagClick.bind(this);
         this.state = {
-            result: SearchStore.getUserSeachHistory(),
+            result: SearchStore.getHashtagSeachHistory(),
             status: ''
         }
     }
@@ -36,36 +39,38 @@ class SearchUser extends React.Component {
         return (
             <div className="media-content" style={{flexFlow: 'column'}}>
                 <form className="search-bar" onSubmit={this._handleSearch}>
-                    <input ref="searchInput" className="search-user" type="text"/>
+                    <input ref="searchInput" className="search-hashtag" type="text"/>
                     <input type="submit" onClick={this._handleSearch} className="search-button" value="Search" />
                 </form>
                 <div className="search-result">
-                    {this.renderUsers(this.state.result)}
+                    {this.renderHashtags(this.state.result)}
                 </div>
                 <StatusBar currentStatus={this.state.status}/>
             </div>);
     }
 
-    renderUsers (users) {
-        if(!users) return <div/>
-        return users.map((user, index) =>
-            <a key={index} onClick={this._handleUserClick(user)} className="user" style={styles.user}>
-                <img style={styles.user_pic} src={user.profile_picture} />
-                <span style={styles.user_name}>{user.username} <span className="name">{user.full_name}</span></span>
+    renderHashtags (hashtags) {
+        if(!hashtags) return <div/>
+        return hashtags.map((hashtag, index) =>
+            <a key={index} onClick={this._handleHashtagClick(hashtag)} className="hashtag">
+                <span className="hashtag-media-count">
+                    <span className="fa fa-instagram"/> {hashtag.media_count}
+                </span>
+                <span className="hashtag-name">#{hashtag.name}</span>
             </a>);
     }
 
-    _handleUserClick (user) {
+    _handleHashtagClick (hashtag) {
         return (e) => {
             if(e) e.preventDefault();
-            this.props.onUserSelected(user)
+            this.props.onHashtagSelected(hashtag.name)
         }
     }
 
     _handleSearch (e) {
         if(e) e.preventDefault();
         let input = ReactDOM.findDOMNode(this.refs['searchInput']);
-        AppServerActions.searchUser(input.value, (result) => {
+        AppServerActions.searchHashtag(input.value, (result) => {
             console.log(result);
             this.setState({result: result, status: ''});
         });
@@ -73,19 +78,6 @@ class SearchUser extends React.Component {
     }
 }
 
-let styles = {
-    user: {
-        display: "flex",
-        flexFlow: "columns",
-        width: "100%"
-    },
-    user_pic: {width: '25px', height: '25px'},
-    user_name: {
-        flex: 1,
-        lineHeight: "25px",
-        fontSize: "1.3em",
-        paddingLeft: "10px"
-    }
-}
 
-module.exports = SearchUser;
+
+module.exports = SearchHashtag;

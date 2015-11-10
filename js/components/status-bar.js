@@ -1,8 +1,8 @@
 var React = require('react');
 
 var AppServerActions = require('actions/app-server-actions'),
-	StateStore = require('stores/state-store'),
-	ActionTypes = require('constants/app-constants').ActionTypes;
+    StateStore = require('stores/state-store'),
+    ActionTypes = require('constants/app-constants').ActionTypes;
 
 class StatusBar extends React.Component {
     constructor(props, context) {
@@ -12,37 +12,36 @@ class StatusBar extends React.Component {
         this._handleLogout = this._handleLogout.bind(this);
 
         this.state = {
-			code: StateStore.getInstagramCode(),
-			access_token: StateStore.getInstagramAccessToken()
-		};
+            code: StateStore.getInstagramCode(),
+            access_token: StateStore.getInstagramAccessToken()
+        };
     }
 
     componentWillMount() {
-		StateStore.addListener(ActionTypes.LOGOUT, this._handleLogout);
-		StateStore.addListener(ActionTypes.INSTAGRAM_CODE, this._handleInstagramCode);
-       	StateStore.addListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._handleInstagramAccessToken);
-	}
+        StateStore.addListener(ActionTypes.LOGOUT, this._handleLogout);
+        StateStore.addListener(ActionTypes.INSTAGRAM_CODE, this._handleInstagramCode);
+           StateStore.addListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._handleInstagramAccessToken);
+    }
 
     componentWillUnmount() {
-		StateStore.removeListener(ActionTypes.LOGOUT, this._handleLogout);
-		StateStore.removeListener(ActionTypes.INSTAGRAM_CODE, this._handleInstagramCode);
+        StateStore.removeListener(ActionTypes.LOGOUT, this._handleLogout);
+        StateStore.removeListener(ActionTypes.INSTAGRAM_CODE, this._handleInstagramCode);
         StateStore.removeListener(ActionTypes.INSTAGRAM_ACCESS_TOKEN, this._handleInstagramAccessToken);
-	}
+    }
 
     render() {
-		var status = "";
-        if(!this.state.code){
-            status = "Logging in...";
-            //AppServerActions.getInstagramCode();
-        }else if(!this.state.access_token){
-            status = "Authenticating...";
-            //AppServerActions.getInstagramAccessToken();
-        }else{
+        // var status = "";
+        // if(!this.state.code){
+        //     status = "Logging in...";
+        //     //AppServerActions.getInstagramCode();
+        // }else if(!this.state.access_token){
+        //     status = "Authenticating...";
+        //     //AppServerActions.getInstagramAccessToken();
+        // }else{
             status = this.props.currentStatus;
-        }
-        console.log(status);
-		return <div className="status">{status}</div>
-	}
+        // }
+        return <div className="status">{status}</div>
+    }
 
     _handleInstagramCode(code) {
         this.setState({code: code});
@@ -53,8 +52,8 @@ class StatusBar extends React.Component {
     }
 
     _handleLogout() {
-    	console.log('_handleLogout');
-    	this.setState({code: null, access_token: null});
+        console.log('_handleLogout');
+        this.setState({code: null, access_token: null});
     }
 }
 

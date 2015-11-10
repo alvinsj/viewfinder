@@ -1,8 +1,8 @@
 
 var React = require('react'),
-	localForage = require('localforage'),
-	ListItem = require('components/list-item'),
-	timeAgo = require('viewfinder-utils').timeAgo,
+    localForage = require('localforage'),
+    ListItem = require('components/list-item'),
+    timeAgo = require('viewfinder-utils').timeAgo,
     AppViewActions = require('actions/app-view-actions');
 
 class Media extends React.Component {
@@ -39,25 +39,23 @@ class Media extends React.Component {
     }
 
     render() {
-    	var media = this.props.media;
-        return (
-            <div className="media">
-				<div className="image">
-					<img src={this.state.photo} />
-				</div>
-				<div className="user" onClick={this._viewUser}>
-					<div className="image"><img src={this.state.profile_pic} /></div>
-					<div className="username">{media.user.username}</div>
-					<div className="time-ago">{timeAgo(media.created_time)} ago</div>
-				</div>
-				<div className="info">
-					<div className="caption">{media.caption.text}</div>
-					<div className="likes">
-						♥ {media.likes.count} likes
-					</div>
-				</div>
+        var media = this.props.media;
+
+        var profilePic = this.state.profile_pic ?
+                        <img className="pic-user-image" src={this.state.profile_pic} onClick={this._viewUser} /> : <div className="pic-user-image"/>;
+
+        return (<div className="pic">
+            <div className="pic-user" onClick={this._viewUser}>
+                {profilePic}
+                <div className="pic-user-name" onClick={this._viewUser}>{media.user.username}</div>
+                <div className="pic-user-timeago">{timeAgo(media.created_time)} ago</div>
             </div>
-        );
+            <img  className="pic-img" src={this.state.photo} />
+            <div  className="pic-info">
+                <div className="pic-caption">{media.caption? media.caption.text : ""}</div>
+                <div className="pic-info-likes"><span className="fa fa-heart"/> {media.likes.count}</div>
+            </div>
+        </div>);
     }
 
     _viewUser() {
@@ -66,15 +64,15 @@ class Media extends React.Component {
 
     _cacheImage(key, picture_url, callback) {
         var component = this;
-		localForage.getItem(key, function(err, blob) {
-			if(!blob){
-				component._requestImage(key, picture_url, callback);
-			}else{
-				console.log('photo_from_cache:', picture_url)
-				callback(key, picture_url);
-			}
+        localForage.getItem(key, function(err, blob) {
+            if(!blob){
+                component._requestImage(key, picture_url, callback);
+            }else{
+                console.log('photo_from_cache:', picture_url)
+                callback(key, picture_url);
+            }
 
-		});
+        });
     }
 
     _requestImage(key, picture_url, callback) {
@@ -103,11 +101,11 @@ class Media extends React.Component {
 
 class DetailsPage extends React.Component {
     render() {
-		console.log('detailsPage', this.props.media)
-		return  <div className="media-content">
-					<Media media={this.props.media} />
+        console.log('detailsPage', this.props.media)
+        return  <div className="media-content">
+                    <Media media={this.props.media} />
                 </div>
-	}
+    }
 }
 
 DetailsPage.propTypes = {

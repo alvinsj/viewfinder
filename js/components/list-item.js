@@ -4,17 +4,17 @@ var localForage = require('localForage');
 var AppViewActions = require('actions/app-view-actions'),
     timeAgo = require('viewfinder-utils').timeAgo;
 
+var assign = require('object-assign');
+
 class ListItem extends React.Component {
     constructor(props, context) {
         super(props, context);
         this._showDetails = this._showDetails.bind(this);
         this._showUser = this._showUser.bind(this);
-        this.handleResize = this.handleResize.bind(this);
         this.state = { profile_pic: null, photo: null};
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this.handleResize, true);
         var component = this;
         //console.log(this.props.media);
         var callback_profile_pic = function(key, url){
@@ -47,21 +47,21 @@ class ListItem extends React.Component {
 
         var showUser = this._showUser.bind(this, media.user);
         var profilePic = this.state.profile_pic ?
-                        <img style={styles.userImageStyle} src={this.state.profile_pic} onClick={showUser} /> : <div style={styles.userImageStyle}/>;
+                        <img className="pic-user-image" src={this.state.profile_pic} onClick={showUser} /> : <div className="pic-user-image"/>;
 
         console.log(this.state, this.props);
 
         return this.state.photo ?
-            (<div style={styles.mediadivStyle}>
-                <div style={styles.userdivStyle} onClick={showUser}>
+            (<div className="pic">
+                <div className="pic-user" onClick={showUser}>
                     {profilePic}
-                    <div style={styles.usernamedivStyle} onClick={showUser}>{media.user.username}</div>
-                    <div style={styles.timeAgodivStyle}>{textAgo} ago</div>
+                    <div className="pic-user-name" onClick={showUser}>{media.user.username}</div>
+                    <div className="pic-user-timeago">{textAgo} ago</div>
                 </div>
-                <img style={styles.imageStyle} src={this.state.photo} onClick={this._showDetails.bind(this, media)}/>
-                <div style={styles.infodivStyle}>
-                    <div style={styles.captiondivStyle}>{media.caption? media.caption.text : ""}</div>
-                    <div style={styles.likesdivStyle}>♥{media.likes.count}likes</div>
+                <img  className="pic-img" src={this.state.photo} onClick={this._showDetails.bind(this, media)}/>
+                <div  className="pic-info">
+                    <div className="pic-info-caption">{media.caption? media.caption.text : ""}</div>
+                    <div className="pic-info-likes"><span className="fa fa-heart"/> {media.likes.count}</div>
                 </div>
             </div>)
             : <div />;
@@ -106,76 +106,11 @@ class ListItem extends React.Component {
 
         request.send()
     }
-
-    handleResize() {
-        this.forceUpdate();
-    }
 }
 
 ListItem.propTypes = {
     media: React.PropTypes.object.isRequired
 };
 
-let styles = {
-    mediadivStyle: {
-        width: window.innerWidth,
-        display: "flex",
-        flexFlow: "column"
-    },
-
-    userdivStyle: {
-        display: "flex",
-        flexFlow: "row",
-        width: window.innerWidth,
-        color: "#FF9900",
-        padding: "10px"
-    },
-
-    usernamedivStyle: {
-        flex: 1,
-        paddingLeft: "5px",
-        fontSize: "1.3em",
-        lineHeight: "25px"
-    },
-
-    imageStyle: {
-        width: window.innerWidth,
-        height: window.innerWidth
-    },
-
-    infodivStyle: {
-        width: window.innerWidth,
-        fontSize: 10,
-        color: "#fff",
-        backgroundColor: "#c0c0c0"
-    },
-
-    userImageStyle: {
-        width: 25,
-        height: 25
-    },
-
-    timeAgodivStyle: {
-        color: '#fff',
-        fontSize: 14
-    },
-
-    captiondivStyle: {
-        width: window.innerWidth-20,
-        height: 40,
-        color: '#fff',
-        fontSize: 14
-    },
-
-    likesdivStyle: {
-        top: window.innerWidth+90,
-        left: 10,
-        textAlign: "right",
-        width: window.innerWidth-20,
-        height: 40,
-        color: '#fff',
-        fontSize: 12
-    }
-}
 
 module.exports = ListItem;
