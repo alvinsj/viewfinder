@@ -47,7 +47,7 @@ class SearchUser extends React.Component {
     }
 
     renderUsers (users) {
-        if(!users) return <div/>
+        if(!users || users.length == 0) return <div><i>No user found</i></div>;
         return users.map((user, index) =>
             <a key={index} onClick={this._handleUserClick(user)} className="user" style={styles.user}>
                 <img style={styles.user_pic} src={user.profile_picture} />
@@ -66,7 +66,6 @@ class SearchUser extends React.Component {
         if(e) e.preventDefault();
         let input = ReactDOM.findDOMNode(this.refs['searchInput']);
         AppServerActions.searchUser(input.value, (result) => {
-            console.log(result);
             this.setState({result: result, status: ''});
         });
         this.setState({status: 'Searching '+input.value+'...'})

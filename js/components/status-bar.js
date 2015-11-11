@@ -52,7 +52,6 @@ class StatusBar extends React.Component {
     }
 
     _handleLogout() {
-        console.log('_handleLogout');
         this.setState({code: null, access_token: null});
     }
 }

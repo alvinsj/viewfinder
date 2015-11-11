@@ -25,17 +25,14 @@ class List extends React.Component {
     }
 
     getNumberOfItems() {
-        //console.log('items', this.props.medias.length)
         return this.props.medias.length;
     }
 
     getItemHeight() {
-        //console.log('item height', window.innerWidth);
         return window.innerWidth+150;
     }
 
     renderItem(index) {
-        //console.log('loading item ', index)
         var media = this.props.medias[index];
         return <ListItem key={index} media={media} />
     }

@@ -33,7 +33,6 @@ class UserPage extends React.Component {
 
     render() {
         var user = this.props.user;
-
         return ( !this.state.medias ?
             <StatusBar currentStatus={"Loading user..."} />:
             <div className="media-content">

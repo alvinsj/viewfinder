@@ -16,7 +16,6 @@ class ListItem extends React.Component {
 
     componentDidMount() {
         var component = this;
-        //console.log(this.props.media);
         var callback_profile_pic = function(key, url){
             localForage.getItem(key, function(err, blob) {
                 if(blob){
@@ -33,7 +32,7 @@ class ListItem extends React.Component {
                 }
             });
         };
-        this._cacheImage('profile_pic:'+this.props.media.id,
+        this._cacheImage('profile_pic:'+this.props.media.user.id,
             this.props.media.user.profile_picture, callback_profile_pic);
         this._cacheImage('photo:'+this.props.media.id,
             this.props.media.images.standard_resolution.url, callback_photo);
@@ -47,18 +46,16 @@ class ListItem extends React.Component {
 
         var showUser = this._showUser.bind(this, media.user);
         var profilePic = this.state.profile_pic ?
-                        <img className="pic-user-image" src={this.state.profile_pic} onClick={showUser} /> : <div className="pic-user-image"/>;
-
-        console.log(this.state, this.props);
+                        <img className="pic-user-image" key={media.user.id} src={this.state.profile_pic} onClick={showUser} /> : <div className="pic-user-image"/>;
 
         return this.state.photo ?
-            (<div className="pic">
+            (<div className="pic" key={media.id}>
                 <div className="pic-user" onClick={showUser}>
                     {profilePic}
                     <div className="pic-user-name" onClick={showUser}>{media.user.username}</div>
                     <div className="pic-user-timeago">{textAgo} ago</div>
                 </div>
-                <img  className="pic-img" src={this.state.photo} onClick={this._showDetails.bind(this, media)}/>
+                <img  className="pic-img" key={media.id} src={this.state.photo} onClick={this._showDetails.bind(this, media)}/>
                 <div  className="pic-info">
                     <div className="pic-info-caption">{media.caption? media.caption.text : ""}</div>
                     <div className="pic-info-likes"><span className="fa fa-heart"/> {media.likes.count}</div>
@@ -82,7 +79,6 @@ class ListItem extends React.Component {
           if(!blob){
             component._requestImage(key, picture_url, callback);
           }else{
-            //console.log('photo_from_cache:', picture_url)
             callback(key, picture_url);
           }
 
@@ -97,7 +93,6 @@ class ListItem extends React.Component {
 
         request.addEventListener('load', function() {
             if (request.status  === 200) {
-                //console.log(request.response)
                 localForage.setItem(key, request.response, function() {
                     callback(key, picture_url);
                 });

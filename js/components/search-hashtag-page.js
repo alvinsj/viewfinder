@@ -50,7 +50,7 @@ class SearchHashtag extends React.Component {
     }
 
     renderHashtags (hashtags) {
-        if(!hashtags) return <div/>
+        if(!hashtags) return <div><i>No hashtag found</i></div>;
         return hashtags.map((hashtag, index) =>
             <a key={index} onClick={this._handleHashtagClick(hashtag)} className="hashtag">
                 <span className="hashtag-media-count">
@@ -63,7 +63,7 @@ class SearchHashtag extends React.Component {
     _handleHashtagClick (hashtag) {
         return (e) => {
             if(e) e.preventDefault();
-            this.props.onHashtagSelected(hashtag.name)
+            this.props.onHashtagSelected(hashtag)
         }
     }
 
@@ -71,7 +71,6 @@ class SearchHashtag extends React.Component {
         if(e) e.preventDefault();
         let input = ReactDOM.findDOMNode(this.refs['searchInput']);
         AppServerActions.searchHashtag(input.value, (result) => {
-            console.log(result);
             this.setState({result: result, status: ''});
         });
         this.setState({status: 'Searching '+input.value+'...'})

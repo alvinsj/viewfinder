@@ -1,4 +1,3 @@
-
 var React = require('react'),
     localForage = require('localforage'),
     ListItem = require('components/list-item'),
@@ -14,7 +13,6 @@ class Media extends React.Component {
 
     componentDidMount() {
         var component = this;
-        //console.log(this.props.media);
         var callback_profile_pic = function(key, url){
             localForage.getItem(key, function(err, blob) {
                 if(blob){
@@ -68,7 +66,6 @@ class Media extends React.Component {
             if(!blob){
                 component._requestImage(key, picture_url, callback);
             }else{
-                console.log('photo_from_cache:', picture_url)
                 callback(key, picture_url);
             }
 
@@ -87,7 +84,6 @@ class Media extends React.Component {
         request.addEventListener('load', function() {
             if (request.status  === 200) { // readyState DONE
                 // We store the binary data as-is; this wouldn't work with localStorage.
-                console.log(request.response)
                 localForage.setItem(key, request.response, function() {
                     // Photo  been saved, do whatever happens next!
                     callback(key, picture_url);
@@ -101,10 +97,10 @@ class Media extends React.Component {
 
 class DetailsPage extends React.Component {
     render() {
-        console.log('detailsPage', this.props.media)
-        return  <div className="media-content">
-                    <Media media={this.props.media} />
-                </div>
+        return  (
+            <div className="media-content">
+                <Media media={this.props.media} />
+            </div>);
     }
 }
 

@@ -13,9 +13,13 @@ var List = require('components/list'),
     DetailsPage = require('components/details-page'),
     StatusBar = require('components/status-bar'),
     SettingsPage = require('components/settings-page'),
+    BookmarkPage = require('components/bookmarks-page'),
+    HomePage = require('components/home-page'),
 
     StateStore = require('stores/state-store'),
     MediaStore = require('stores/media-store'),
+    BookmarkStore = require('stores/bookmark-store'),
+    SearchStore = require('stores/bookmark-store'),
 
     AppViewActions = require('actions/app-view-actions'),
     AppServerActions = require('actions/app-server-actions'),
@@ -76,10 +80,11 @@ class App extends React.Component {
     }
 
     render() {
-        console.log(this.state.page)
         return  (<div>
                     <App.NavigationBar
                         onTitleClick={this._refresh}
+                        user={this.state.user}
+                        hashtag={this.state.hashtag}
                         page={this.state.page}
                         title={this._titleFromPage(this.state.page)}/>
                     {this._selectPage(this.state.page)}
@@ -104,7 +109,7 @@ class App extends React.Component {
                 return <i className="fa fa-instagram" />;
 
             case '/hashtag':
-                return '#'+this.state.hashtag;
+                return '#'+this.state.hashtag.name;
 
             case '/user':
                 var roundedStyle = {width: 100, height: 100, borderRadius: 50}
@@ -116,6 +121,9 @@ class App extends React.Component {
 
             case '/settings':
                 return 'Settings';
+
+            case '/bookmarks':
+                return 'Bookmarks';
 
             case '/search_user':
                 return <span><small><i className="fa fa-search"/></small> Search User</span>;
@@ -141,7 +149,7 @@ class App extends React.Component {
                 return <UserPage user={this.state.user} />;
 
             case '/hashtag':
-                return <HashtagPage hashtag={this.state.hashtag} />;
+                return <HashtagPage hashtag={this.state.hashtag.name} />;
 
             case '/settings':
                 return <SettingsPage user={this.state.user} />;
@@ -152,12 +160,13 @@ class App extends React.Component {
             case '/search_user':
                 return <SearchUserPage onUserSelected={this._handleViewUser}/>;
 
+            case '/bookmarks':
+                return <BookmarkPage
+                    onUserSelected={this._handleViewUser}
+                    onHashtagSelected={this._handleViewHashtag} />;
+
             default:
-                return (this.state.medias ?
-                    (<div className="media-content">
-                      <List medias={this.state.medias} />
-                    </div>)
-                    : <StatusBar currentStatus="" />);
+                return <HomePage />;
         }
     }
 
@@ -237,7 +246,13 @@ App.MenuBar = class extends React.Component {
 };
 
 App.NavigationBar = class extends React.Component {
+    constructor(props, context){
+        super(props, context);
+        this.renderRightButton = this.renderRightButton.bind(this);
+    }
+
     render (){
+        var rightButton = this.renderRightButton();
         return (
             <h1 className="brand">
                 { this.props.page != '/' ?
@@ -249,9 +264,46 @@ App.NavigationBar = class extends React.Component {
                     {this.props.title}
                 </span>
                 <span className="right">
-                    <img src="img/icons/icon48x48.png" style={{width: 24, height: 24}} onClick={this._goToSettings}/>
+                    {rightButton}
                 </span>
             </h1>);
+    }
+
+    renderRightButton (){
+        switch(this.props.page){
+        case '/hashtag':
+            return <a style={{width: "24px", height: "24px"}}
+                    onClick={this._addHashtagBookmark(this.props.hashtag)} >
+                    <i className="fa fa-plus" />
+            </a>;
+            break;
+        case '/user':
+            return <a style={{width: "24px", height: "24px"}}
+                onClick={this._addUserBookmark(this.props.user)}>
+                <i className="fa fa-plus" />
+            </a>;
+            break;
+        default:
+            return <img src="img/icons/icon48x48.png"
+                style={{width: 24, height: 24}} onClick={this._goToSettings}/>;
+            break;
+        }
+    }
+
+    _addUserBookmark(user) {
+        return (e) => {
+            if(e) e.preventDefault();
+            AppViewActions.addUserBookmark(user);
+            alert(user.username+' was added to bookmarks');
+        }
+    }
+
+    _addHashtagBookmark(hashtag) {
+        return (e) => {
+            if(e) e.preventDefault();
+            AppViewActions.addHashtagBookmark(hashtag);
+            alert(hashtag.name+' was added to bookmarks');
+        }
     }
 
     _backToHome (){

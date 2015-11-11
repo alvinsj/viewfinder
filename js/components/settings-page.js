@@ -1,7 +1,7 @@
-
 var React = require('react'),
     AppServerActions = require('actions/app-server-actions'),
-    AppViewActions = require('actions/app-view-actions');
+    AppViewActions = require('actions/app-view-actions'),
+    localForage = require('localforage');
 
 
 class SettingsItem extends React.Component {
@@ -72,8 +72,15 @@ class SettingsPage extends React.Component {
                 <SettingsItem name={<Link href="https://github.com/babel">babel/babel</Link>}/>
                 <SettingsItem name={<Link href="https://github.com/substack/browserify">substack/browserify</Link>} />
                 <SettingsItem name={<Link href="https://github.com/mozilla/localforage">mozilla/localforage</Link>} />
+                <SettingsItemButton name="Clear bookmarks/cache" onClick={this._clear}/>
              </div>
         </div>);
+    }
+    _clear() {
+        localForage.clear(function(err) {
+            if(!err) alert('Cache is cleared.');
+            else alert('Cache cannot be cleared.');
+        });
     }
 
     _logout() {

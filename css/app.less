@@ -131,7 +131,11 @@ h1.brand{
       display: flex;
       flex-flow: columns;
       flex: 1;
-      line-height: 34px;
+      line-height: 30px;
+      margin-top: 10px;
+      a {
+          flex: 1;
+      }
   }
   .hashtag-media-count {
       color: orange;
@@ -143,16 +147,23 @@ h1.brand{
       padding-left: 10px;
   }
 }
+
 .search-result {
    .search-bar;
    flex-flow: column;
+   .fa{
+      font-size: 1.8em;
+   }
   .user {
-      padding: 10px;
+      margin-top: 10px;
       flex: 1;
       color: #FF9900;
       .name {
           font-style: italic;
           color: white;
+      }
+      a {
+          flex: 1;
       }
   }
 }
