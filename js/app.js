@@ -96,6 +96,8 @@ class App extends React.Component {
     _handlePageSelected(page){
         var previous = this.state.previous;
         previous.push(page);
+        
+        if(page == '/') previous = [];
 
         this.setState({page: page, previous: previous});
     }
@@ -232,6 +234,7 @@ App.MenuBar = class extends React.Component {
     render () {
         return (
             <div className="menu-bar">
+                <div><a className="fa fa-home" onClick={this._handleClick('/')}/></div>
                 <div><a className="fa fa-users" onClick={this._handleClick('/search_user')}/></div>
                 <div><a className="fa fa-tags" onClick={this._handleClick('/search_hashtag')}/></div>
                 <div><a className="fa fa-bookmark-o" onClick={this._handleClick('/bookmarks')}/></div>
