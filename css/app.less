@@ -1,6 +1,9 @@
 html, body {
   margin: 0;
   padding: 0;
+
+  overflow-x: hidden;
+  font-family: "Open Sans", "sans-serif";
 }
 
 body {
@@ -9,7 +12,7 @@ body {
   color: #efefef;
   width: 100vw;
   height: 100vh;
-  
+
   background-color: black;
   display: flex;
   flex-direction: column;
@@ -43,21 +46,27 @@ iframe{
   height: 100vh;
 }
 
+#app {
+    padding-bottom: 44px;
+}
+
 h1.brand{
   height: 44px;
 
-  position: absolute;
+  position: fixed;
   top: 0;
   left:0;
   width: 100%;
   background-color: rgba(0,0,0,0.3);
 
   display: flex;
-  flex-direction: row; 
+  flex-direction: row;
+
+  font-size: 1.5em;
+
   span{
     padding-top: 10px;
     padding-bottom: 10px;
-    font-size: 24px;
     height: 24px;
     line-height: 24px;
   }
@@ -69,7 +78,6 @@ h1.brand{
   span.title{
     flex-grow: 1;
     text-align: center;
-    font-size: 16px;
   }
   span.right{
     padding-right: 10px;
@@ -77,9 +85,87 @@ h1.brand{
   }
 }
 
+.menu-bar {
+    height: 44px;
+
+    position: fixed;
+    bottom: 0;
+    left:0;
+    width: 100%;
+    background-color: rgba(0,0,0,0.3);
+
+    display: flex;
+    flex-direction: row;
+    div {
+        flex: 1;
+        text-align: center;
+        font-size: 25px;
+    }
+}
+
 .media-content{
   display: flex;
   flex-flow: row wrap;
+  padding-top: 44px;
+}
+
+.search-bar{
+  flex: 1;
+  display: flex;
+  flex-flow: row wrap;
+
+  padding-left: 10px;
+  padding-right:10px;
+
+  input.search-user,input.search-hashtag  {
+      flex: 1;
+      padding: 10px;
+      font-size: 1.2em;
+  }
+  .search-button {
+      padding: 10px;
+      font-size: 1.2em;
+      background-color: orange;
+  }
+  .hashtag {
+      display: flex;
+      flex-flow: columns;
+      flex: 1;
+      line-height: 30px;
+      margin-top: 10px;
+      a {
+          flex: 1;
+      }
+  }
+  .hashtag-media-count {
+      color: orange;
+      flex: 1;
+  }
+  .hashtag-name {
+      flex: 3;
+      font-size: 1.3em;
+      padding-left: 10px;
+  }
+}
+
+.search-result {
+   .search-bar;
+   flex-flow: column;
+   .fa{
+      font-size: 1.8em;
+   }
+  .user {
+      margin-top: 10px;
+      flex: 1;
+      color: #FF9900;
+      .name {
+          font-style: italic;
+          color: white;
+      }
+      a {
+          flex: 1;
+      }
+  }
 }
 
 .media {
@@ -118,7 +204,7 @@ h1.brand{
 .status{
   position: absolute;
   left: 10px;
-  bottom: 14px;
+  bottom: 54px;
   font-size: 14px;
 }
 
@@ -134,9 +220,9 @@ h1.brand{
   padding: 10px;
   font-size: 16px;
   height: 24px;
-  
+
   a, a:link, a:visited{
-    color: rgba(30, 185, 223, 1.00);
+    color: rgba(30,185,223,1.00);
   }
 
   .name{
@@ -148,18 +234,99 @@ h1.brand{
     flex-grow: 1;
     align-self: flex-end;
     text-align: right;
-    color: rgba(30, 185, 223, 1.00);
+    color: rgba(30,185,223,1.00);
 
   }
   .button{
     width: 100%;
     color: white;
-    background-color: rgba(30, 185, 223, 1.00);
+    background-color: rgba(30,185,223,1.00);
     height: 40px;
     border: none;
   }
   .separator{
     flex-grow: 1;
-    border-bottom: 2px solid rgba(30, 185, 223, 1.00);
+    border-bottom: 2px solid rgba(30,185,223,1.00);
   }
+}
+
+.pic-list {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+}
+
+.pic {
+    display: flex;
+    flex-flow: column;
+    min-width: 15rem;
+    flex: 1;
+
+    .pic-user{
+        display: flex;
+        flex-flow: row;
+        color: #FF9900;
+        padding: 10px;
+    }
+    .pic-info {
+        font-size: 10px;
+        color: #fff;
+        background-color: rgba(0,0,0,0.3);
+        padding: 10px;
+        display: flex
+    }
+    .pic-img {
+        width: 100%;
+    }
+
+    .pic-user-name {
+        flex: 1;
+        padding-left: 5px;
+
+        font-size: 1.3em;
+        line-height: 25px;
+    }
+
+    .pic-user-image {
+        width: 25px;
+        height: 25px;
+    }
+
+    .pic-user-timeago {
+        color: #fff;
+
+        font-size: 1.2em;
+        line-height: 25px;
+    }
+
+    .pic-info-caption {
+        color: #fff;
+        font-size: 1.3em;
+        line-height: 25px;
+
+        flex: 1;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    };
+
+    .pic-caption {
+        color: #fff;
+        font-size: 1.3em;
+        line-height: 25px;
+
+        flex: 1;
+    };
+
+    .pic-info-likes {
+        color: #fff;
+        font-size: 1.3em;
+        line-height: 25px;
+
+        text-align: right;
+        .fa {
+            color: red;
+        }
+    }
 }

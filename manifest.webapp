@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.1.0",
   "name": "Viewfinder for Instagram",
   "description": "Instagram client on Firefox OS",
   "launch_path": "/index.html",
@@ -19,7 +19,7 @@
       "description": "Required to load remote content"
     },
     "browser": {
-      "description": "Required for instagram authentication"    
+      "description": "Required for instagram authentication"
     }
   },
   "installs_allowed_from": [

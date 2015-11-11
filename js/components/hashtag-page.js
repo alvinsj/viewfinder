@@ -6,35 +6,36 @@ var AppServerActions = require('actions/app-server-actions'),
     List = require('components/list'),
     StatusBar = require('components/status-bar');
 
-class UserPage extends React.Component {
+class HashtagPage extends React.Component {
     constructor(props, context) {
         super(props, context);
         this._loadMedias = this._loadMedias.bind(this);
 
         this.state = {
-            medias: MediaStore.getUserTimeline(props.user.id)
+            medias: MediaStore.getHashtagTimeline(props.hashtag)
         };
     }
 
     componentWillMount() {
-        MediaStore.addListener(ActionTypes.FETCH_USER_TIMELINE, this._loadMedias);
+        MediaStore.addListener(ActionTypes.FETCH_HASHTAG_TIMELINE, this._loadMedias);
     }
 
     componentWillUnmount() {
-        MediaStore.removeListener(ActionTypes.FETCH_USER_TIMELINE, this._loadMedias);
+        MediaStore.removeListener(ActionTypes.FETCH_HASHTAG_TIMELINE, this._loadMedias);
     }
 
     componentDidMount() {
         var component = this;
         if(!this.state.medias){
-             AppServerActions.fetchUserTimeline(this.props.user);
+             AppServerActions.fetchHashtagTimeline(this.props.hashtag);
         }
     }
 
     render() {
-        var user = this.props.user;
+        var hashtag = this.props.hashtag;
+
         return ( !this.state.medias ?
-            <StatusBar currentStatus={"Loading user..."} />:
+            <StatusBar currentStatus={"Loading hashtag..."} />:
             <div className="media-content">
                 <List medias={this.state.medias} />
             </div>);
@@ -45,8 +46,8 @@ class UserPage extends React.Component {
     }
 }
 
-UserPage.propTypes = {
-    user: React.PropTypes.object.isRequired
+HashtagPage.propTypes = {
+    hashtag: React.PropTypes.object.isRequired
 };
 
-module.exports = UserPage;
+module.exports = HashtagPage;

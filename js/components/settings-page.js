@@ -1,75 +1,92 @@
-/** @jsx React.DOM */
 var React = require('react'),
-	AppServerActions = require('actions/app-server-actions'),
-	AppViewActions = require('actions/app-view-actions');
+    AppServerActions = require('actions/app-server-actions'),
+    AppViewActions = require('actions/app-view-actions'),
+    localForage = require('localforage');
 
 
-var SettingsItem = React.createClass({
-	render: function(){
-		return (
-		<div className="settings-item">
-			<div className="name">{this.props.name}</div>
-			<div className="value">{this.props.value}</div>
-		</div>);
-	}
-});
+class SettingsItem extends React.Component {
+    render() {
+        return (
+        <div className="settings-item">
+            <div className="name">{this.props.name}</div>
+            <div className="value">{this.props.value}</div>
+        </div>);
+    }
+}
 
-var SettingsItemButton = React.createClass({
-	render: function(){
-		return (
-		<div className="settings-item">
-			<button className="button" onClick={this.props.onClick}>{this.props.name}</button>
-		</div>);
-	}
-});
+class SettingsItemButton extends React.Component {
+    render() {
+        return (
+        <div className="settings-item">
+            <button className="button" onClick={this.props.onClick}>{this.props.name}</button>
+        </div>);
+    }
+}
 
-var SettingsItemSeparator = React.createClass({
-	render: function(){
-		return (
-		<div className="settings-item">
-			<div className="separator"></div>
-		</div>);
-	}
-});
+class SettingsItemSeparator extends React.Component {
+    render() {
+        return (
+        <div className="settings-item">
+            <div className="separator"></div>
+        </div>);
+    }
+}
 
-var Link = React.createClass({
-	render: function(){
-		return <a ref="link" href="#" onClick={this._onClick}>{this.props.children}</a>
-	},
-	_onClick: function(e){
-		e.preventDefault();
+class Link extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this._onClick = this._onClick.bind(this);
+    }
 
-		var activity = new MozActivity({
-		    name: "view",
-		    data: {
-		              type: "url",
-		              url: this.props.href
-		          }
-	    });
-	}
-});
+    render() {
+        return <a ref="link" href="#" onClick={this._onClick}>{this.props.children}</a>
+    }
 
-var SettingsPage = React.createClass({
-	render: function(){
-		return (
-		<div className="media-content">
-			<div className="media">
-				<SettingsItem name="Version" value="0.0.1" />
-				<SettingsItemSeparator />
-				<SettingsItem name="Credits" />
-				<SettingsItem name={<Link href="https://github.com/facebook/react">facebook/react</Link>} />
-				<SettingsItem name={<Link href="https://github.com/Flipboard/react-canvas">flipboard/react-canvas</Link>} />
-				<SettingsItem name={<Link href="https://github.com/totemstech/instagram-node">totemstech/instagram-node</Link>} />
-				<SettingsItem name={<Link href="https://github.com/substack/browserify">substack/browserify</Link>} />
-				<SettingsItem name={<Link href="https://github.com/mozilla/localforage">mozilla/localforage</Link>} />
+    _onClick(e) {
+        e.preventDefault();
 
-				<SettingsItemButton name="Logout" onClick={this._logout}/>
- 			</div> 
-		</div>);
-	},
-	_logout: function(){
-		AppViewActions.backToHome();
-		AppServerActions.logout();
-	}
-})
+        var activity = new MozActivity({
+            name: "view",
+            data: {
+                      type: "url",
+                      url: this.props.href
+                  }
+        });
+    }
+}
+
+class SettingsPage extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this._logout = this._logout.bind(this);
+    }
+
+    render() {
+        return (
+        <div className="media-content">
+            <div className="media">
+                <SettingsItem name="Version" value="0.1.0" />
+                <SettingsItemSeparator />
+                <SettingsItem name="Credits" />
+                <SettingsItem name={<Link href="https://github.com/facebook/react">facebook/react</Link>} />
+                <SettingsItem name={<Link href="https://github.com/babel">babel/babel</Link>}/>
+                <SettingsItem name={<Link href="https://github.com/substack/browserify">substack/browserify</Link>} />
+                <SettingsItem name={<Link href="https://github.com/mozilla/localforage">mozilla/localforage</Link>} />
+                <SettingsItemButton name="Clear bookmarks/cache" onClick={this._clear}/>
+             </div>
+        </div>);
+    }
+    _clear() {
+        localForage.clear(function(err) {
+            if(!err) alert('Cache is cleared.');
+            else alert('Cache cannot be cleared.');
+        });
+    }
+
+    _logout() {
+        AppViewActions.backToHome();
+        AppServerActions.logout();
+    }
+}
+
 module.exports = SettingsPage;

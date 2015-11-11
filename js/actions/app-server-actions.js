@@ -1,130 +1,155 @@
 var AppDispatcher = require('dispatchers/app-dispatcher');
 var ActionTypes = require('constants/app-constants').ActionTypes;
-var StateStore = require('stores/state-store'),
-	ig = StateStore.ig,
-	localForage = require('localForage');
+var StateStore = require('stores/state-store');
+var BookmarkStore = require('stores/bookmark-store');
+var MediaStore = require('stores/media-store');
 
+var localForage = require('localForage');
+var AppViewActions = require('actions/app-view-actions');
 var _redirect_url = "http://alvinsj.com/viewfinder/ffos";
 
-module.exports = {
-    logout: function(){
-        console.log('Logging out')
+var AppServerActions = {
+    searchUser: function(query, cb) {
+        var clientId = require('instagram').client_id;
+        var path = `https://api.instagram.com/v1/users/search?q=${query}&client_id=${clientId}`;
+        var request = new XMLHttpRequest({mozSystem: true});
 
-        var browser = document.getElementById('browser');
-        var app = document.getElementById('app');
+        request.open('GET', path, true);
+        request.responseType = 'json';
 
-        browser.setAttribute('src', "https://instagram.com/accounts/logout");
-
-        var dispatch = function(event){
-            if(event.detail == "https://instagram.com/accounts/logout"){
-            }else if(event.detail == "https://instagram.com/"){
-                console.log('Logged out');
-                browser.removeEventListener('mozbrowserlocationchange', dispatch);
+        request.addEventListener('load', function() {
+            if (request.status  === 200) {
+                cb(request.response.data);
                 AppDispatcher.dispatch({
-                    type: ActionTypes.LOGOUT
+                    type: ActionTypes.SEARCH_USER,
+                    users: request.response.data
                 });
             }
-        };
-        browser.addEventListener('mozbrowserlocationchange', dispatch);
+        });
+
+        request.send()
     },
-    getInstagramCode: function(){
-        console.log('getInstagramCode')
+    searchHashtag: function(query, cb) {
+        var clientId = require('instagram').client_id;
+        var path = `https://api.instagram.com/v1/tags/search?q=${query}&client_id=${clientId}`;
+        var request = new XMLHttpRequest({mozSystem: true});
 
-        StateStore.ig = require('instagram-node').instagram();
-        ig = StateStore.ig;
-        ig.use(require('instagram'));
+        request.open('GET', path, true);
+        request.responseType = 'json';
 
-		var auth_url = ig.get_authorization_url(_redirect_url);
-        var browser = document.getElementById('browser');
-        var app = document.getElementById('app');
-        
-        app.style.display = 'none';
-        browser.style.display = 'block';
-
-        browser.addEventListener('mozbrowserlocationchange', function(event){
-            if(event.detail.indexOf('http://alvinsj.com') == 0){
-                var url = new URL(event.detail);
-                browser.stop();
-                browser.style.display = 'none';
-                app.style.display = 'block';
+        request.addEventListener('load', function() {
+            if (request.status  === 200) {
+                cb(request.response.data);
                 AppDispatcher.dispatch({
-                	type: ActionTypes.INSTAGRAM_CODE,
-                	code: url.search.slice(6)
+                    type: ActionTypes.SEARCH_HASHTAG,
+                    hashtags: request.response.data
                 });
             }
         });
-        browser.setAttribute('src', auth_url);
-	},
-	getInstagramAccessToken: function(code){
-		console.log('getInstagramAccessToken')
-		var code = StateStore.getInstagramCode();
 
-		ig.authorize_user(code, _redirect_url, function(err, result){
-            if (err) {
-                console.log('error: ', err);
-            } else {
-                ig.use({ access_token: result.access_token });
+        request.send()
+    },
+
+    fetchUserTimeline: function(user){
+        localForage.getItem('user:'+user.id+':timeline', function(err, medias) {
+            if(err) console.log(err);
+            if(medias) {
                 AppDispatcher.dispatch({
-                	type: ActionTypes.INSTAGRAM_ACCESS_TOKEN,
-                	access_token: result.access_token
+                    type: ActionTypes.FETCH_USER_TIMELINE,
+                    user: user,
+                    medias: medias
                 })
-            } 
+            }
         });
-	},
-	fetchTimeline: function(){
-		console.log('fetchTimeline');
-		var access_token = StateStore.getInstagramAccessToken();
 
-        if(access_token){
-           localForage.getItem('timeline', function(err, medias) {
-           		if(err) console.log(err);
-                if(medias) {
-                    AppDispatcher.dispatch({
-                    	type: ActionTypes.FETCH_TIMELINE,
-                    	medias: medias
-                    })
-                }
-           });
-           ig.user_self_feed(function(err, medias, pagination, remaining, limit) {
-           	   if(err) console.log(err);
+        var clientId = require('instagram').client_id;
+        var path = `https://api.instagram.com/v1/users/${user.id}/media/recent?client_id=${clientId}`;
+        // We'll download the user's photo with AJAX.
+        var request = new XMLHttpRequest({mozSystem: true});
 
-               AppDispatcher.dispatch({
-                	type: ActionTypes.FETCH_TIMELINE,
-                	medias: medias
-                });
-               localForage.setItem('timeline', medias, function() {});
-           });   
-        }else{
-        	AppServerAction.getInstagramCode();
-        }
-	},
-	fetchUserTimeline: function(user){
-		console.log('fetchUserTimeline', user);
-		var access_token = StateStore.getInstagramAccessToken();
+        // Let's get the first user's photo.
+        request.open('GET', path, true);
+        request.responseType = 'json';
 
-        if(access_token){
-           localForage.getItem('user:'+user.id+':timeline:', function(err, medias) {
-                if(err) console.log(err);
-                if(medias) {
-                    AppDispatcher.dispatch({
-                    	type: ActionTypes.FETCH_USER_TIMELINE,
-                    	user: user,
-                    	medias: medias
-                    })
-                }
-           });
-           ig.user_media_recent(user.id, function(err, medias, pagination, remaining, limit) {
-               if(err) console.log(err);
-               
-               AppDispatcher.dispatch({
-                	type: ActionTypes.FETCH_USER_TIMELINE,
-                	user: user,
-                	medias: medias
-                });
-               localForage.setItem('user:'+user.id+':timeline', medias, function() {});
-           });   
-        }else{
-        	AppServerAction.getInstagramCode();
-        }
-	}
+        // When the AJAX state changes, save the photo locally.
+        request.addEventListener('load', function() {
+            if (request.status  === 200) { // readyState DONE
+                // We store the binary data as-is; this wouldn't work with localStorage.
+                let medias = request.response.data;
+                AppDispatcher.dispatch({
+                     type: ActionTypes.FETCH_USER_TIMELINE,
+                     user: user,
+                     medias: medias
+                 });
+                localForage.setItem('user:'+user.id+':timeline', medias, function() {});
+            }else{
+                console.error(request);
+            }
+        });
+
+        request.send()
+    },
+    fetchHashtagTimeline: function(hashtag){
+        localForage.getItem('hashtag:'+hashtag+':timeline', function(err, medias) {
+            if(err) console.log(err);
+            if(medias) {
+                AppDispatcher.dispatch({
+                    type: ActionTypes.FETCH_HASHTAG_TIMELINE,
+                    hashtag: hashtag,
+                    medias: medias
+                })
+            }
+        });
+
+        var clientId = require('instagram').client_id;
+        var path = `https://api.instagram.com/v1/tags/${hashtag}/media/recent?client_id=${clientId}`;
+        // We'll download the user's photo with AJAX.
+        var request = new XMLHttpRequest({mozSystem: true});
+
+        // Let's get the first user's photo.
+        request.open('GET', path, true);
+        request.responseType = 'json';
+
+        // When the AJAX state changes, save the photo locally.
+        request.addEventListener('load', function() {
+            if (request.status  === 200) { // readyState DONE
+                // We store the binary data as-is; this wouldn't work with localStorage.
+                let medias = request.response.data;
+                AppDispatcher.dispatch({
+                     type: ActionTypes.FETCH_HASHTAG_TIMELINE,
+                     hashtag: hashtag,
+                     medias: medias
+                 });
+                localForage.setItem('hashtag:'+hashtag+':timeline', medias, function() {});
+            }else{
+                console.error(request);
+            }
+        });
+
+        request.send()
+    },
+    fetchBookmarkTimeline: function(hashtag){
+        localForage.getItem('bookmark:timeline', function(err, medias) {
+            if(err) console.log(err);
+            if(medias) {
+                AppDispatcher.dispatch({
+                    type: ActionTypes.FETCH_BOOKMARK_TIMELINE,
+                    medias: medias
+                })
+            }
+        });
+
+        AppViewActions.fetchBookmarks(function(){
+            BookmarkStore.getUserBookmarks().forEach((user) => {
+                if(!MediaStore.getUserTimeline(user.id))
+                    AppServerActions.fetchUserTimeline(user);
+            });
+            BookmarkStore.getHashtagBookmarks().forEach((hashtag) => {
+                if(!MediaStore.getUserTimeline(hashtag.name))
+                    AppServerActions.fetchHashtagTimeline(hashtag.name);
+            });
+        });
+    }
 }
+
+module.exports = AppServerActions;
