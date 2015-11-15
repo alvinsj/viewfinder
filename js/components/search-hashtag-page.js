@@ -3,8 +3,6 @@ var React = require('react'),
     ReactDOM = require('react-dom'),
     localForage = require('localforage'),
     ListItem = require('components/list-item'),
-    timeAgo = require('viewfinder-utils').timeAgo,
-
 
     AppServerActions = require('actions/app-server-actions'),
     AppViewActions = require('actions/app-view-actions'),

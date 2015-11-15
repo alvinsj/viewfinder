@@ -61,6 +61,7 @@ h1.brand{
 
   display: flex;
   flex-direction: row;
+  z-index: 1;
 
   font-size: 1.5em;
 
@@ -261,6 +262,7 @@ h1.brand{
     flex-flow: column;
     min-width: 15rem;
     flex: 1;
+    position: relative;
 
     .pic-user{
         display: flex;
@@ -273,7 +275,18 @@ h1.brand{
         color: #fff;
         background-color: rgba(0,0,0,0.3);
         padding: 10px;
-        display: flex
+        display: flex;
+    }
+    .pic-type {
+        color: rgb(255, 255, 255);
+        position: absolute;
+        right: 0px;
+        padding: 10px;
+        font-size: 2em;
+        display: flex;
+        text-align: right;
+        flex: 1;
+        align-self: flex-end;
     }
     .pic-img {
         width: 100%;
@@ -309,6 +322,7 @@ h1.brand{
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+
     };
 
     .pic-caption {
@@ -317,6 +331,10 @@ h1.brand{
         line-height: 25px;
 
         flex: 1;
+        a, a:link, a:visited {
+            color: orange;
+            text-decoration: none;
+        }
     };
 
     .pic-info-likes {

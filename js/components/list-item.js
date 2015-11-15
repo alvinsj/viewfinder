@@ -11,7 +11,9 @@ class ListItem extends React.Component {
         super(props, context);
         this._showDetails = this._showDetails.bind(this);
         this._showUser = this._showUser.bind(this);
-        this.state = { profile_pic: null, photo: null};
+        this.renderMedia = this.renderMedia.bind(this);
+
+        this.state = {profile_pic: null, photo: null};
     }
 
     componentDidMount() {
@@ -40,7 +42,6 @@ class ListItem extends React.Component {
     }
 
     render() {
-
         var media = this.props.media;
         var textAgo = timeAgo(media.created_time);
 
@@ -48,21 +49,48 @@ class ListItem extends React.Component {
         var profilePic = this.state.profile_pic ?
                         <img className="pic-user-image" key={media.user.id} src={this.state.profile_pic} onClick={showUser} /> : <div className="pic-user-image"/>;
 
-        return this.state.photo ?
-            (<div className="pic" key={media.id}>
+        return (
+            <div className="pic" key={media.id}>
                 <div className="pic-user" onClick={showUser}>
                     {profilePic}
                     <div className="pic-user-name" onClick={showUser}>{media.user.username}</div>
                     <div className="pic-user-timeago">{textAgo} ago</div>
                 </div>
-                <img  className="pic-img" key={media.id} src={this.state.photo} onClick={this._showDetails.bind(this, media)}/>
+                {this.renderMedia()}
                 <div  className="pic-info">
                     <div className="pic-info-caption">{media.caption? media.caption.text : ""}</div>
                     <div className="pic-info-likes"><span className="fa fa-heart"/> {media.likes.count}</div>
                 </div>
-            </div>)
-            : <div />;
+            </div>);
 
+    }
+
+    renderMedia() {
+        let media = this.props.media;
+        if(media.type == 'video'){
+            console.log('renderMedia: video', media);
+            return [
+                <div className="pic-type">
+                    <i className="fa fa-video-camera" />    
+                </div>,
+                <video className="pic-img"
+                    crossOrigin
+                    onClick={(e) => {
+                        let video = e.target;
+
+                        if(video.paused || video.ended){
+                            console.log('play');
+                            video.play();
+                        }else video.pause();
+                    }}
+                    src={media.videos.low_resolution.url}
+                    poster={this.state.photo} />];
+        }else{
+            return <img className="pic-img" key={media.id}
+                src={this.state.photo}
+                onClick={this._showDetails.bind(this, media)}/>
+
+        }
     }
 
     _showDetails(media, e) {
