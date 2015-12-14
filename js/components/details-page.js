@@ -2,7 +2,8 @@ var React = require('react'),
     localForage = require('localforage'),
     ListItem = require('components/list-item'),
     timeAgo = require('viewfinder-utils').timeAgo,
-    AppViewActions = require('actions/app-view-actions');
+    AppViewActions = require('actions/app-view-actions'),
+    linkify = require('utils/linkify');
 
 class Media extends React.Component {
     constructor(props, context) {
@@ -50,7 +51,7 @@ class Media extends React.Component {
             </div>
             <img  className="pic-img" src={this.state.photo} />
             <div  className="pic-info">
-                <div className="pic-caption">{media.caption? media.caption.text : ""}</div>
+                <div className="pic-caption">{media.caption? linkify(media.caption.text) : ""}</div>
                 <div className="pic-info-likes"><span className="fa fa-heart"/> {media.likes.count}</div>
             </div>
         </div>);

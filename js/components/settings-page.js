@@ -3,7 +3,6 @@ var React = require('react'),
     AppViewActions = require('actions/app-view-actions'),
     localForage = require('localforage');
 
-
 class SettingsItem extends React.Component {
     render() {
         return (

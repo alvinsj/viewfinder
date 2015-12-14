@@ -8,6 +8,7 @@ module.exports = {
 
         FETCH_TIMELINE: null,
         FETCH_USER_TIMELINE: null,
+        FETCH_USER: null,
         FETCH_HASHTAG_TIMELINE: null,
         FETCH_BOOKMARK_TIMELINE: null,
         SEARCH_USER: null,

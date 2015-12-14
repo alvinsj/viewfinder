@@ -89,6 +89,43 @@ var AppServerActions = {
 
         request.send()
     },
+    fetchUser: function(user){
+        localForage.getItem('user:'+user.id+':data', function(err, userData) {
+            if(err) console.log(err);
+            if(userData) {
+                AppDispatcher.dispatch({
+                    type: ActionTypes.FETCH_USER,
+                    user: userData
+                })
+            }
+        });
+
+        var clientId = require('instagram').client_id;
+        var path = `https://api.instagram.com/v1/users/${user.id}?client_id=${clientId}`;
+        // We'll download the user's photo with AJAX.
+        var request = new XMLHttpRequest({mozSystem: true});
+
+        // Let's get the first user's photo.
+        request.open('GET', path, true);
+        request.responseType = 'json';
+
+        // When the AJAX state changes, save the photo locally.
+        request.addEventListener('load', function() {
+            if (request.status  === 200) { // readyState DONE
+                // We store the binary data as-is; this wouldn't work with localStorage.
+                let userData = request.response.data;
+                AppDispatcher.dispatch({
+                     type: ActionTypes.FETCH_USER,
+                     user: userData
+                 });
+                localForage.setItem('user:'+user.id+':data', userData, function() {});
+            }else{
+                console.error(request);
+            }
+        });
+
+        request.send()
+    },
     fetchHashtagTimeline: function(hashtag){
         localForage.getItem('hashtag:'+hashtag+':timeline', function(err, medias) {
             if(err) console.log(err);

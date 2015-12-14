@@ -4,7 +4,8 @@ var localForage = require('localForage');
 var AppViewActions = require('actions/app-view-actions'),
     timeAgo = require('viewfinder-utils').timeAgo;
 
-var assign = require('object-assign');
+var assign = require('object-assign'),
+    linkify = require('utils/linkify');
 
 class ListItem extends React.Component {
     constructor(props, context) {
@@ -68,10 +69,10 @@ class ListItem extends React.Component {
     renderMedia() {
         let media = this.props.media;
         if(media.type == 'video'){
-            console.log('renderMedia: video', media);
+            // console.log('renderMedia: video', media);
             return [
                 <div className="pic-type">
-                    <i className="fa fa-video-camera" />    
+                    <i className="fa fa-video-camera" />
                 </div>,
                 <video className="pic-img"
                     crossOrigin
